@@ -18,7 +18,7 @@ function getAllTopics($offset, $id=null) {
                 LIMIT ? OFFSET ?";
 
         $types = 'iii';
-        $param = [$id, PER_PAGE, $offset];
+        $params = [$id, PER_PAGE, $offset];
     } else {
         $sql = "SELECT t.*, u.username 
                 FROM topics t 
@@ -28,24 +28,10 @@ function getAllTopics($offset, $id=null) {
                 LIMIT ? OFFSET ?";
 
         $types = 'ii';
-        $param = [PER_PAGE, $offset];
+        $params = [PER_PAGE, $offset];
     }
 
-    $stmt = mysqli_prepare($link, $sql); // создаем подготовленный объект statement для обработки
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-
-    mysqli_stmt_bind_param($stmt, $types, ...$param); // Привязываем значение: i = integer
-
-    $exec = mysqli_stmt_execute($stmt); // Выполняем подготовленное выражение
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    $result = mysqli_stmt_get_result($stmt); // Получаем результат запроса
-    mysqli_stmt_close($stmt); // Закрываем statement
+    $result = getDataFromDb($link, $sql, $types, $params);
 
     if (!$result) return false;
     return createSmartyRecAssocArr($result);
@@ -134,25 +120,15 @@ function getTopicWithPosts($topicId) {
             WHERE t.id = ? AND t.is_active = 1
             ORDER BY p.created_at ASC";
 
-    $stmt = mysqli_prepare($link, $sql);
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    mysqli_stmt_bind_param($stmt, 'i', $topicId);
-    $exec = mysqli_stmt_execute($stmt);
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
+    $types = 'i';
+    $params = [$topicId];
 
-    $result = mysqli_stmt_get_result($stmt);
+
+    $result = getDataFromDb($link, $sql, $types, $params);
     if (!$result) {
-        mysqli_stmt_close($stmt);
         return false;
     }
     $rows = createSmartyRecAssocArr($result);
-    mysqli_stmt_close($stmt);
 
     if (empty($rows)) {
         return ['topic' => null, 'posts' => []];
@@ -199,23 +175,15 @@ function getPagination($page, $catId=null) {
     if ($catId !== null) {
         $sql .= " AND category_id = ?";
     }
-    $stmt = mysqli_prepare($link, $sql);
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
     if ($catId !== null) {
-        mysqli_stmt_bind_param($stmt, 'i', $catId);
+        $types = 'i';
+        $params = [$catId];
+        $total = getDataFromDb($link, $sql, $types, $params);
+    } else {
+        $total = mysqli_query($link, $sql);
     }
 
-    $exec = mysqli_stmt_execute($stmt);
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    $total = mysqli_stmt_get_result($stmt);
     $total = createSmartyRecAssocArr($total)[0];
-    mysqli_stmt_close($stmt);
 
     $totalPages = max(1, (int)ceil($total['total'] / PER_PAGE));
 

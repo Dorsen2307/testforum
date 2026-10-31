@@ -120,6 +120,25 @@ function checkInput($text): string
     return htmlspecialchars($text);
 }
 
+// Запрос данных из БД с защитой от инъекций
+function getDataFromDb($link, $sql, $types, $params) {
+    $stmt = mysqli_prepare($link, $sql); // Создаем объект statement для обработки
+    if (!$stmt) {
+        mysqli_stmt_close($stmt);
+        return false;
+    }
+    mysqli_stmt_bind_param($stmt, $types, ...$params); // Привязываем значения
+    $exec = mysqli_stmt_execute($stmt); // Выполняем запрос
+    if (!$exec) {
+        mysqli_stmt_close($stmt);
+        return false;
+    }
+    $result = mysqli_stmt_get_result($stmt); // Получаем результат
+    mysqli_stmt_close($stmt);
+    return $result;
+}
+
+
 //===== функция для отладки ====
 function logging($fileName, $var) {
     file_put_contents(__DIR__ . '/' . $fileName . '.log', print_r($var, true) . PHP_EOL, FILE_APPEND);

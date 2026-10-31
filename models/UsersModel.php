@@ -15,36 +15,18 @@ function registrationNewUser($name, $email, $pwHash) {
 
     $link = createConnection();
     $sql = "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)";
-    $stmt = mysqli_prepare($link, $sql);
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    mysqli_stmt_bind_param($stmt, "sss", $name, $email, $pwHash);
-    $exec = mysqli_stmt_execute($stmt);
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    $result = mysqli_stmt_get_result($stmt);
-    mysqli_stmt_close($stmt);
+    $types = 'sss';
+    $params = [$name, $email, $pwHash];
+
+    $result = getDataFromDb($link, $sql, $params, $types);
 
     if ($result) {
         $sql = "SELECT * FROM users WHERE (email = ? and password_hash = ?) LIMIT 1";
-        $stmt = mysqli_prepare($link, $sql);
-        if (!$stmt) {
-            mysqli_stmt_close($stmt);
-            return false;
-        }
-        mysqli_stmt_bind_param($stmt, "ss", $email, $pwHash);
-        $exec = mysqli_stmt_execute($stmt);
-        if (!$exec) {
-            mysqli_stmt_close($stmt);
-            return false;
-        }
-        $result = mysqli_stmt_get_result($stmt);
+        $types = 'ss';
+        $params = [$email, $pwHash];
+
+        $result = getDataFromDb($link, $sql, $params, $types);
         $result = createSmartyRecAssocArr($result);
-        mysqli_stmt_close($stmt);
 
         if (isset($result[0])) {
             $result['success'] = true;
@@ -67,20 +49,10 @@ function loginUser($email, $pwd) {
     $email = htmlspecialchars($email);
     $link = createConnection();
     $sql = "SELECT * FROM users WHERE email = ? LIMIT 1";
-    $stmt = mysqli_prepare($link, $sql);
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    $exec = mysqli_stmt_execute($stmt);
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    $result = mysqli_stmt_get_result($stmt);
-    mysqli_stmt_close($stmt);
+    $types = 's';
+    $params = [$email];
 
+    $result = getDataFromDb($link, $sql, $params, $types);
     $result = createSmartyRecAssocArr($result);
     if (isset($result[0])) {
         $result['success'] = true;
@@ -174,20 +146,10 @@ function checkUserPassword($email, $password) {
     $email = (string)$email;
     $link = createConnection();
     $sql = "SELECT password_hash FROM users WHERE email = ?";
-    $stmt = mysqli_prepare($link, $sql);
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    $exec = mysqli_stmt_execute($stmt);
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    $result = mysqli_stmt_get_result($stmt);
-    mysqli_stmt_close($stmt);
+    $types = 's';
+    $params = [$email];
 
+    $result = getDataFromDb($link, $sql, $params, $types);
     $result = createSmartyRecAssocArr($result);
     $isPwd = password_verify($password, $result[0]['password_hash']); // true если совпадают
 
@@ -203,19 +165,10 @@ function checkUserEmail($email) {
     $email = (string)$email;
     $link = createConnection();
     $sql = "SELECT id FROM users WHERE email = ?";
-    $stmt = mysqli_prepare($link, $sql);
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    $exec = mysqli_stmt_execute($stmt);
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    $result = mysqli_stmt_get_result($stmt);
-    mysqli_stmt_close($stmt);
+    $types = 's';
+    $params = [$email];
+
+    $result = getDataFromDb($link, $sql, $params, $types);
 
     return createSmartyRecAssocArr($result);
 }
