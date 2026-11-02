@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-10-30 20:28:52
+/* Smarty version 5.8.5, created on 2026-11-02 13:42:46
   from 'file:topic.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6ae4d3d4b9b524_73700605',
+  'unifunc' => 'content_6ae8692631a6c0_32940076',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '85f0a02e439b93c007f06c4594bcfd973cdddf14' => 
     array (
       0 => 'topic.tpl',
-      1 => 1793378072,
+      1 => 1793616165,
       2 => 'file',
     ),
   ),
@@ -21,10 +21,11 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
     'file:../includes/head.tpl' => 1,
     'file:../includes/header.tpl' => 1,
     'file:../includes/section.tpl' => 1,
+    'file:../includes/pagination.tpl' => 1,
     'file:../includes/footer.tpl' => 1,
   ),
 ))) {
-function content_6ae4d3d4b9b524_73700605 (\Smarty\Template $_smarty_tpl) {
+function content_6ae8692631a6c0_32940076 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\default';
 ?><!doctype html>
 <html lang="ru">
@@ -103,6 +104,8 @@ $_smarty_tpl->getSmarty()->getRuntime('Foreach')->restore($_smarty_tpl, 1);?>
             </div>
         <?php }?>
 
+        <?php $_smarty_tpl->renderSubTemplate('file:../includes/pagination.tpl', $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), (int) 0, $_smarty_current_dir);
+?>
 
         <!-- Форма добавления поста (если пользователь авторизован) -->
         <?php if ($_smarty_tpl->getValue('arrUser')) {?>

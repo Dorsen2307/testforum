@@ -56,7 +56,7 @@
             </div>
         {/if}
 
-{*        {include '../includes/pagination.tpl'}*}
+        {include '../includes/pagination.tpl'}
 
         <!-- Форма добавления поста (если пользователь авторизован) -->
         {if $arrUser}

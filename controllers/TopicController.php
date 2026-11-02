@@ -4,7 +4,7 @@
  */
 include_once '../models/TopicsModel.php';
 include_once '../models/PostsModel.php';
-include_once '../models/CAtegoriesModel.php';
+include_once '../models/CategoriesModel.php';
 /**
  * Метод формирования страницы темы
  * @param $smarty
@@ -12,13 +12,16 @@ include_once '../models/CAtegoriesModel.php';
 function indexAction($smarty) {
     $topicId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
     $arrUser = isset($_SESSION['user']) ? $_SESSION['user'] : false;
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
     if ($topicId <= 0) {
         Header("Location: /");
         exit;
     }
 
-    $data = getTopicWithPosts($topicId);
+    $pagData = getPaginationPosts($page, $topicId);
+
+    $data = getTopicWithPosts($pagData['offset'], $topicId);
 
     if (!$data['topic']) {
         // Тема не найдена
@@ -34,6 +37,10 @@ function indexAction($smarty) {
     $smarty->assign('arrUser', $arrUser);
     $smarty->assign('topic', $data['topic']);
     $smarty->assign('posts', $data['posts']);
+    $smarty->assign('isPost', true);
+    $smarty->assign('page', $page);
+    $smarty->assign('totalPages', $pagData['totalPages']);
+
     loadTemplate($smarty, 'topic');
 }
 

@@ -9,14 +9,15 @@
  * @param $name string имя пользователя
  * @return bool|array массив данных нового пользователя
  */
-function registrationNewUser($name, $email, $pwHash) {
+function registrationNewUser($name, $email, $pwHash, $role='user') {
     $name = htmlspecialchars((string)$name);
     $email = htmlspecialchars($email);
+    $role = htmlspecialchars($role);
 
     $link = createConnection();
-    $sql = "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)";
     $types = 'sss';
-    $params = [$name, $email, $pwHash];
+    $params = [$name, $email, $pwHash, $role];
 
     $result = getDataFromDb($link, $sql, $params, $types);
 
@@ -25,7 +26,7 @@ function registrationNewUser($name, $email, $pwHash) {
         $types = 'ss';
         $params = [$email, $pwHash];
 
-        $result = getDataFromDb($link, $sql, $params, $types);
+        $result = getDataFromDb($link, $sql, $types, $params);
         $result = createSmartyRecAssocArr($result);
 
         if (isset($result[0])) {
@@ -52,7 +53,7 @@ function loginUser($email, $pwd) {
     $types = 's';
     $params = [$email];
 
-    $result = getDataFromDb($link, $sql, $params, $types);
+    $result = getDataFromDb($link, $sql, $types, $params);
     $result = createSmartyRecAssocArr($result);
     if (isset($result[0])) {
         $result['success'] = true;
@@ -149,7 +150,7 @@ function checkUserPassword($email, $password) {
     $types = 's';
     $params = [$email];
 
-    $result = getDataFromDb($link, $sql, $params, $types);
+    $result = getDataFromDb($link, $sql, $types, $params);
     $result = createSmartyRecAssocArr($result);
     $isPwd = password_verify($password, $result[0]['password_hash']); // true если совпадают
 
@@ -168,7 +169,21 @@ function checkUserEmail($email) {
     $types = 's';
     $params = [$email];
 
-    $result = getDataFromDb($link, $sql, $params, $types);
+    $result = getDataFromDb($link, $sql, $types, $params);
 
     return createSmartyRecAssocArr($result);
+}
+
+/**
+ * Проверяет на наличие/отсутствие пользователей
+ * @return bool
+ */
+function firstUser() {
+    $link = createConnection();
+    $sql = "SELECT * FROM users";
+    $result = mysqli_query($link, $sql);
+    if (mysqli_num_rows($result) < 0 || !$result) {
+        return false;
+    }
+    return true;
 }

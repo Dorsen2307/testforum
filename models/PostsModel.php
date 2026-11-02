@@ -68,3 +68,33 @@ function addPost($topicId, $userId, $content, $parentId = null) {
         ];
     }
 }
+
+/**
+ * Запрос offset для пагинации постов
+ * @param $link
+ * @param $page
+ * @return array
+ */
+function getPaginationPosts($page, $topId) {
+    $link = createConnection();
+    // Считаем общее число записей
+    $sql = "SELECT COUNT(*) AS total FROM posts WHERE topic_id = ?";
+    $types = 'i';
+    $params = [$topId];
+    $total = getDataFromDb($link, $sql, $types, $params);
+
+    $total = createSmartyRecAssocArr($total)[0];
+
+    $totalPages = max(1, (int)ceil($total['total'] / PER_PAGE));
+
+    if ($page > $totalPages) {
+        $page = $totalPages;
+    }
+
+    $offset = ($page - 1) * PER_PAGE;
+
+    return [
+        'offset' => $offset,
+        'totalPages' => $totalPages
+    ];
+}

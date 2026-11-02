@@ -15,6 +15,9 @@ const DB_PASS = '';
 // Константы пагинации
 const PER_PAGE = 2;
 
+// Роли
+const ROLE = ['user', 'admin', 'moderator'];
+
 // Папка шаблона
 $templateFolders = 'default';
 

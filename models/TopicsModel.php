@@ -98,7 +98,7 @@ function createNewTopic($categoryId, $userId, $title, $content, $postCount) {
  * Запрос постов по id темы
  * @return bool|mysqli
  */
-function getTopicWithPosts($topicId) {
+function getTopicWithPosts($offset, $topicId) {
     $link = createConnection();
     $sql = "SELECT 
                 t.id AS topic_id,
@@ -118,10 +118,11 @@ function getTopicWithPosts($topicId) {
             LEFT JOIN posts p ON p.topic_id = t.id
             LEFT JOIN users pu ON p.user_id = pu.id
             WHERE t.id = ? AND t.is_active = 1
-            ORDER BY p.created_at ASC";
+            ORDER BY p.created_at ASC
+            LIMIT ? OFFSET ?";
 
-    $types = 'i';
-    $params = [$topicId];
+    $types = 'iii';
+    $params = [$topicId, PER_PAGE, $offset];
 
 
     $result = getDataFromDb($link, $sql, $types, $params);
@@ -163,12 +164,12 @@ function getTopicWithPosts($topicId) {
 }
 
 /**
- * Запрос offset для пагинации
+ * Запрос offset для пагинации тем
  * @param $link
  * @param $page
  * @return array
  */
-function getPagination($page, $catId=null) {
+function getPaginationTopics($page, $catId=null) {
     $link = createConnection();
     // Считаем общее число записей
     $sql = "SELECT COUNT(*) AS total FROM topics WHERE is_active = 1";

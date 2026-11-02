@@ -9,6 +9,7 @@
     </header>
     <div class="container">
         <form id="registerForm">
+            <input type="hidden" name="role" value="{$role}">
             <!-- Имя пользователя -->
             <div class="form-group">
                 <label class="form-label" for="username">Имя пользователя <span>*</span></label>

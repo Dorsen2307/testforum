@@ -17,10 +17,10 @@ function indexAction($smarty) {
     $allCategories = getAllCategories();
 
     if (!isset($_GET['id'])) {
-        $pagData = getPagination($page);
+        $pagData = getPaginationTopics($page);
         $allTopics = getAllTopics($pagData['offset']);
     } else {
-        $pagData = getPagination($page, $categoryId);
+        $pagData = getPaginationTopics($page, $categoryId);
         $allTopics = getAllTopics($pagData['offset'], $categoryId);
         $smarty->assign('catId', $categoryId);
     }

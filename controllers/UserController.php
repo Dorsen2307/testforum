@@ -18,16 +18,24 @@ function indexAction($smarty) {
  * @param $smarty
  */
 function templateregistrationAction($smarty) {
-    $smarty->assign('flagReg', true);
-    loadTemplate($smarty, 'registration');
+    if (!isset($_SESSION['user'])) {
+        if (!firstUser()) {
+            $smarty->assing('role', ROLE[1]);
+        }
+
+        $smarty->assign('flagReg', true);
+        loadTemplate($smarty, 'registration');
+    }
 }
 
 /**
  * Открытие формы авторизации пользователя
  */
 function templateauthAction($smarty) {
-    $smarty->assign('flagAuth', true);
-    loadTemplate($smarty, 'authorization');
+    if (!isset($_SESSION['user'])) {
+        $smarty->assign('flagAuth', true);
+        loadTemplate($smarty, 'authorization');
+    }
 }
 
 /**
@@ -43,6 +51,7 @@ function registrationAction() {
         exit;
     }
     $userName = isset($_POST['userName']) ? trim($_POST['userName']) : '';
+    $role = isset($_POST['role']) ? trim($_POST['role']) : null;
     $email = isset($_POST['email']) ? trim($_POST['email']) : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
     $confirmPassword = isset($_POST['confirmPassword']) ? $_POST['confirmPassword'] : '';
@@ -61,13 +70,14 @@ function registrationAction() {
 
     $pwHash = password_hash($password, PASSWORD_BCRYPT);
 
-    $userData = registrationNewUser($userName, $email, $pwHash);
+    $userData = registrationNewUser($userName, $email, $pwHash, !is_null($role) ?: $role);
 
     if ($userData['success']) {
         $userData = $userData[0];
         $userName = $userData['username'] ?: $userData['email'];
         $_SESSION['user'] = $userData;
         $_SESSION['user']['displayName'] = $userName;
+        $_SESSION['user']['role'] = $role;
 
         echo json_encode([
             'success' => true,
