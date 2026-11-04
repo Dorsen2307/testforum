@@ -222,3 +222,57 @@ function openReplyForm(postId) {
     textarea.focus();
     window.scrollTo(0, document.body.scrollHeight);
 }
+
+/** Переключение вкладок в профиле
+ * @param tabName имя вкладки
+ */
+function showProfileTab(tabName) {
+    document.querySelectorAll('.profile-tab').forEach(t => {
+        const isActive = t.dataset.tab === tabName;
+        t.classList.toggle('active', isActive);
+        t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('.profile-panel').forEach(p => {
+        p.classList.toggle('active', p.id === `panel-${tabName}`);
+    });
+}
+
+/**
+ * Отправка новых данных пользователя через AJAX
+ */
+function updateProfileUserData() {
+    let form = $('#updateProfileForm')[0];
+    const formData = new FormData(form);
+
+    $.ajax ({
+        type: 'POST',
+        url: '/?controller=user&action=updateuserdata',
+        data: formData,
+        dataType: 'json',
+        success: function (data) {
+            if (data.success) {
+                alert (data.message);
+                window.location.href = '/?controller=user&action=profile';
+            } else {
+                showFormErrors(data.errors || {})
+            }
+        },
+        error: function(xhr) {
+            let response;
+            try {
+                response = JSON.parse(xhr.responseText);
+            } catch (e) {
+                console.error('Не удалось распарсить ответ сервера', xhr.responseText);
+                alert('Произошла ошибка на сервере. Проверьте консоль.');
+                return;
+            }
+
+            showFormErrors(response.errors || {});
+
+            if (!response.errors) {
+                alert(response.message || 'Произошла ошибка при обновлении данных');
+            }
+        }
+    });
+}

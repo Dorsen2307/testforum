@@ -120,26 +120,42 @@ function checkInput($text): string
     return htmlspecialchars($text);
 }
 
-// Запрос данных из БД с защитой от инъекций
-function getDataFromDb($link, $sql, $types, $params) {
-    $stmt = mysqli_prepare($link, $sql); // Создаем объект statement для обработки
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    mysqli_stmt_bind_param($stmt, $types, ...$params); // Привязываем значения
-    $exec = mysqli_stmt_execute($stmt); // Выполняем запрос
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    $result = mysqli_stmt_get_result($stmt); // Получаем результат
-    mysqli_stmt_close($stmt);
-    return $result;
+
+/** Перемещаем файл из временного хранилища в папку проекта
+ * @param $file array распакованный массив уровня `$file['file']`
+ */
+function movingFileToStorageFolder($file, $fileName) {
+    // Получаем полный путь к файлу во временном хранилище
+    $currentPath = $file['tmp_name'];
+    // Получаем имя загружаемого файла
+//    $fileName = date("Y-m-d-H-i-s") . "_" . $userId . "_" . $file['name'];
+    // Формируем путь внутри проекта
+    $newPath = dirname(__FILE__) . UPLOAD_PROFILE_FOLDER . $fileName;
+    // Перемещаем файл из временного хранилища в наш проект
+    $res =  move_uploaded_file($currentPath, $newPath);
+    return $res;
 }
 
 
 //===== функция для отладки ====
 function logging($fileName, $var) {
-    file_put_contents(__DIR__ . '/' . $fileName . '.log', print_r($var, true) . PHP_EOL, FILE_APPEND);
+    // Метка времени для каждой записи
+    $timestamp = date('Y-m-d H:i:s') . ' | ';
+
+    if (is_array($var) || is_object($var)) {
+        // Массивы и объекты выводим в читаемом виде с заголовком
+        $type = is_array($var) ? 'Array' : get_class($var);
+        $message = $timestamp . "=== {$type} ===\n" . print_r($var, true) . "=== конец {$type} ===\n";
+    } elseif (is_bool($var)) {
+        // bool в конкатенации превращается в пустую строку — выводим явно
+        $message = $timestamp . var_export($var, true) . PHP_EOL;
+    } elseif (is_null($var)) {
+        $message = $timestamp . 'NULL' . PHP_EOL;
+    } else {
+        $message = $timestamp . print_r($var, true) . PHP_EOL;
+    }
+
+    file_put_contents(__DIR__ . '/' . $fileName . '.log', $message, FILE_APPEND);
 }
+
+

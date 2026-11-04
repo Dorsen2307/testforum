@@ -369,6 +369,116 @@ header {
     background-color: transparent;
 }
 
+/*======= Профиль ========*/
+.profile-title {
+    margin: 0 0 1.5rem;
+    font-size: 1.75rem;
+    color: var(--text);
+}
+
+.profile-card {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--border);
+    background: var(--bg-body);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-head {
+    min-width: 0;
+}
+
+.profile-login {
+    margin: 0 0 0.4rem;
+    font-size: 1.35rem;
+    color: var(--text);
+}
+
+.profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.profile-meta a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+/* Вкладки */
+.profile-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.75rem;
+}
+
+.profile-tab {
+    padding: 0.55rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.profile-tab:hover {
+    border-color: var(--accent);
+}
+
+.profile-tab.active {
+    background: var(--bg-card-active);
+    border-color: var(--bg-card-active);
+    color: var(--text);
+}
+
+/* Панели вкладок */
+.profile-panel {
+    display: none;
+}
+
+.profile-panel.active {
+    display: block;
+}
+
+.profile-about-text {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text);
+}
+
+/* Форма настроек */
+.profile-form .form-input[type="file"] {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
 
 
 footer {

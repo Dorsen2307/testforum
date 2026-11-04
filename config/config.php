@@ -21,6 +21,11 @@ const ROLE = ['user', 'admin', 'moderator'];
 // Папка шаблона
 $templateFolders = 'default';
 
+// Константы для работы с файлами
+const ALLOWED_FILE = ['jpg', 'jpeg', 'png'];
+const UPLOAD_PROFILE_FOLDER = "/../www/uploads/profile/";
+const UPLOAD_PROFILE_URL = "/uploads/profile/";
+
 // Путь к шаблонам
 define ('TMPLTPREFIX', "../views/$templateFolders/");
 
@@ -42,3 +47,4 @@ $smarty->setCacheDir('../tmp/smarty/cache'); // хранение кеширов�
 $smarty->setConfigDir('../library/Smarty/configs'); // конфигурация данных
 
 $smarty->assign('templateWebPath', TMPLTWEBPATH);
+$smarty->assign('uploadUrl', UPLOAD_PROFILE_URL);

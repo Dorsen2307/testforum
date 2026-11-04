@@ -153,3 +153,83 @@ function logoutAction() {
     }
     redirect("/");
 }
+
+/**
+ * Формирование страницы профиля
+ * @param $smarty
+ */
+function profileAction($smarty) {
+    $arrUser = isset($_SESSION['user']) ? $_SESSION['user'] : false;
+
+    if ($arrUser) {
+        $arrUser['roleName'] = $arrUser['role'] === 'user' ? 'Пользователь' : ($arrUser['role'] === 'admin' ? 'Администратор' : 'Модератор');
+
+        $smarty->assign('arrUser', $arrUser);
+
+        loadTemplate($smarty, 'profile');
+    }
+}
+
+function updateuserdataAction() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Неверный метод запроса'
+        ]);
+        exit;
+    }
+
+    $id = isset($_SESSION['user']['id']) ? intval($_SESSION['user']['id']) : 0;
+    $username = isset($_POST['login']) ? $_POST['login'] : '';
+    $email = isset($_POST['email']) ? $_POST['email'] : '';
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
+    $about = isset($_POST['about']) ? $_POST['about'] : '';
+    $photo = isset($_FILES['photo']) ? $_FILES['photo'] : [];
+
+    $errors = checkProfileParams($username, $email, $password, $photo);
+
+    if (!empty($errors)) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Введенные данные не прошли проверку',
+            'errors' => $errors
+        ]);
+        exit;
+    }
+
+    $pwdHash = $password == '' ? '' : password_hash($password, PASSWORD_BCRYPT);
+
+    $userData = updateUser($id, $username, $email, $password, $pwdHash, $about, $photo);
+
+    if (isset($userData['isChanged']) && !$userData['isChanged']) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $userData['errors']
+        ]);
+        exit;
+    }
+
+    $message = isset($userData['message']) ? $userData['message'] : '';
+
+    if ($userData['success']) {
+        $userData = $userData[0];
+        $_SESSION['user'] = $userData;
+        $_SESSION['user']['displayName'] = $userData['username'];
+        $_SESSION['user']['photo'] = $userData['photo'];
+
+        echo json_encode([
+            'success' => true,
+            'message' => $message,
+            'newUserData' => $userData
+        ]);
+        exit;
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => $message
+        ]);
+        exit;
+    }
+}

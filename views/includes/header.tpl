@@ -16,7 +16,7 @@
             {if not $flagCreateTopic}
                 <a type="button" href="/?controller=topic&action=templatecreatetopic">Создать тему</a>
             {/if}
-            <a href="/profile" class="username">{$arrUser['displayName']}</a>
+            <a href="/?controller=user&action=profile" class="username">{$arrUser['displayName']}</a>
             <a type="button" href="/?controller=user&action=logout">Выйти</a>
         {/if}
     </div>
