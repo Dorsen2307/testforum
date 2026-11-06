@@ -71,7 +71,9 @@ function plural($n, $one, $few, $many) {
     return $many;
 }
 
-// Замена дат в массиве на форматированный
+/** Замена дат в массиве на форматированный
+ * @return array в массив добавляются конвертированные даты с префиксом user_
+ */
 function replaceDate($arr) {
     // Если массив пустой — сразу возвращаем
     if (empty($arr)) {
@@ -80,7 +82,6 @@ function replaceDate($arr) {
 
     // Проверяем, является ли первый элемент массивом (значит, это список записей)
     $isList = is_array(reset($arr));
-
     if ($isList) {
         // Обрабатываем каждую запись в списке
         foreach ($arr as $key => $row) {
@@ -159,3 +160,16 @@ function logging($fileName, $var) {
 }
 
 
+function getOffsetAndTotalPages($page, $count) {
+    $totalPages = max(1, (int)ceil($count / PER_PAGE));
+    if ($page > $totalPages) {
+        $page = $totalPages;
+    }
+
+    $offset = ($page - 1) * PER_PAGE;
+
+    return [
+        'offset' => $offset,
+        'totalPages' => $totalPages
+    ];
+}

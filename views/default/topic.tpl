@@ -27,35 +27,7 @@
         </div>
 
         <!-- Список постов -->
-        {if $posts|@count > 0}
-            <div class="posts-list">
-                {foreach $posts as $post}
-                    <article class="post-item" id="post-{$post.id}">
-                        <div class="post-header">
-                            <span class="post-author"><strong>{$post.author|escape}</strong></span>
-                            <span class="post-date">{$post.user_created_at}</span>
-                        </div>
-
-                        <div class="post-content">
-                            <!-- Если нужны авто-переносы строк -->
-                            {$post.content|nl2br}
-                        </div>
-
-                        <!-- Кнопка ответа (если пользователь авторизован) -->
-                        {if $arrUser}
-                            <div class="post-actions">
-                                <button type="button" class="btn btn-sm btn-outline" onclick="openReplyForm({$post.id})">Ответить</button>
-                            </div>
-                        {/if}
-                    </article>
-                {/foreach}
-            </div>
-        {else}
-            <div class="empty-state">
-                В этой теме пока нет сообщений. Будь первым!
-            </div>
-        {/if}
-
+        {include '../includes/posts.tpl'}
         {include '../includes/pagination.tpl'}
 
         <!-- Форма добавления поста (если пользователь авторизован) -->

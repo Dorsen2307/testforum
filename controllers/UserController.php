@@ -3,6 +3,8 @@
  * Контроллер пользователя
  */
 include_once '../models/UsersModel.php';
+include_once '../models/TopicsModel.php';
+include_once '../models/PostsModel.php';
 /**
  * Формирование профиля пользователя
  * @param $smarty object
@@ -159,15 +161,57 @@ function logoutAction() {
  * @param $smarty
  */
 function profileAction($smarty) {
-    $arrUser = isset($_SESSION['user']) ? $_SESSION['user'] : false;
+    $arrUser = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+    $otherUserId = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+    $tab = isset($_GET['tab']) ? $_GET['tab'] : 'about';
+    $page = isset($_GET['page']) ? $_GET['page'] : 1;
+    $isCurrentUser = false; // Это чужой профиль
+    $allTopics = [];
+    $allPosts = [];
 
-    if ($arrUser) {
+    if (!$otherUserId || (int)$arrUser['id'] === (int)$otherUserId) {
+        $isCurrentUser = true; // Это наш профиль
+        $userId = $arrUser['id'];
         $arrUser['roleName'] = $arrUser['role'] === 'user' ? 'Пользователь' : ($arrUser['role'] === 'admin' ? 'Администратор' : 'Модератор');
-
-        $smarty->assign('arrUser', $arrUser);
-
-        loadTemplate($smarty, 'profile');
+        $smarty->assign('arrProfile', $arrUser);
+    } else {
+        $userId = $otherUserId;
+        $arrOtherUser = getUserById($otherUserId);
+        $arrOtherUser['roleName'] = $arrOtherUser['role'] === 'user' ? 'Пользователь' : ($arrOtherUser['role'] === 'admin' ? 'Администратор' : 'Модератор');
+        $smarty->assign('arrProfile', $arrOtherUser);
     }
+
+    if ($tab == 'topics') {
+        $pagData = getPaginationTopics($page, null, $userId);
+        if ($pagData) {
+            $allTopics = getAllTopics($pagData['offset'], null, $userId);
+            $allTopics = replaceDate($allTopics);
+        }
+        $smarty->assign('userId', $userId);
+        $smarty->assign('allTopics', $allTopics);
+        $smarty->assign('totalPages', $pagData['totalPages']);
+    }
+
+    if ($tab == 'posts') {
+        $pagData = getPaginationPosts($page, null, $userId);
+        if ($pagData) {
+            $allPosts = getAllPosts($pagData['offset'], null, $userId);
+            $allPosts = replaceDate($allPosts);
+        }
+        $smarty->assign('userId', $userId);
+        $smarty->assign('posts', $allPosts);
+        $smarty->assign('totalPages', $pagData['totalPages']);
+    }
+
+    $arrUser['displayName'] = $arrUser['username'];
+
+    $smarty->assign('arrUser', $arrUser);
+    $smarty->assign('isCurrentUser', $isCurrentUser);
+    $smarty->assign('isProfile', true);
+    $smarty->assign('tab', $tab);
+    $smarty->assign('page', $page);
+
+    loadTemplate($smarty, 'profile');
 }
 
 function updateuserdataAction() {

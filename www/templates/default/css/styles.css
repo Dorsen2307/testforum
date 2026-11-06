@@ -162,7 +162,7 @@ header {
 }
 .topic-row {
     display: grid;
-    grid-template-columns: 3fr 1fr 1fr;
+    grid-template-columns: 3fr 1fr 2fr;
     gap: 1rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -230,6 +230,8 @@ header {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    list-style-type: none;
+    padding: 0;
 }
 .post-item {
     border-left: 3px solid #ccc;
@@ -244,6 +246,9 @@ header {
     align-items: baseline;
     margin-bottom: 16px;
     font-size: 0.95rem;
+}
+.post-author {
+    text-decoration: none;
 }
 .post-item:hover {
     background: #fff;
@@ -266,7 +271,7 @@ header {
     color: #888;
 }
 .post-content {
-    line-height: 1.6;
+    line-height: 1;
     color: #222;
 }
 
@@ -332,6 +337,7 @@ header {
     background: transparent;
     border: 1px solid #ddd;
     color: #333;
+    text-decoration: none;
 }
 .btn-outline:hover {
     border-color: #aaa;
@@ -445,6 +451,7 @@ header {
     color: var(--text);
     font-size: 0.9rem;
     cursor: pointer;
+    text-decoration: none;
     transition: all 0.2s;
 }
 
@@ -459,13 +466,13 @@ header {
 }
 
 /* Панели вкладок */
-.profile-panel {
-    display: none;
-}
+/*.profile-panel {*/
+/*    display: none;*/
+/*}*/
 
-.profile-panel.active {
-    display: block;
-}
+/*.profile-panel.active {*/
+/*    display: block;*/
+/*}*/
 
 .profile-about-text {
     margin: 0;

@@ -3,7 +3,7 @@
     {foreach $allTopics as $topic}
     <li class="topic-row">
         <div class="topic-card-title">
-            <a href="/?controller=topic&id={$topic['id']}">{$topic['title']}</a>
+            <a href="/?controller=topic&topic_id={$topic['id']}">{$topic['title']}</a>
         </div>
         <div class="topic-card-meta">
             Автор: {$topic['username']}<br>

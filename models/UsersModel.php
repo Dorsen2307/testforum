@@ -244,21 +244,7 @@ function firstUser() {
  * @return array
  */
 function updateUser($id, $username, $email, $password, $pwdHash, $about, $photo) {
-    $link = createConnection();
-    // Читаем данные текущего пользователя с БД
-    $sqlInput = "SELECT * FROM users WHERE id = ? LIMIT 1";
-    $types = 'i';
-    $params = [$id];
-
-    $result = getDataFromDb($link, $sqlInput, $types, $params);
-    if (!$result) {
-        return [
-            'success' => false,
-            'message' => 'Ошибка запроса данных пользователя'
-        ];
-    }
-
-    $result = createSmartyRecAssocArr($result)[0];
+    $result = getUserById($id);
 
     // Формируем запрос на основе измененных данных в форме
     $sqlUpdate = "UPDATE users SET ";
@@ -312,7 +298,7 @@ function updateUser($id, $username, $email, $password, $pwdHash, $about, $photo)
             'errors' => ['new-data' => 'Не введены новые данные']
         ];
     }
-
+    $link = createConnection();
     mysqli_begin_transaction($link); // открываем транзакцию
     $resultUpdate = executeQuery($link, $sqlUpdate, $types, $params);
 
@@ -351,4 +337,59 @@ function updateUser($id, $username, $email, $password, $pwdHash, $about, $photo)
     }
 
     return $resultQuery;
+}
+//
+///**
+// * Запрос offset для пагинации тем в профиле
+// * @param $page int номер страницы
+// * @param $userId int id пользователя
+// * @return array
+// */
+//function getPaginationTopicsProfile($page, $userId) {
+//    $link = createConnection();
+//    $sqlCount = "SELECT COUNT(*) AS topics_count FROM topics WHERE user_id = ? AND is_active = 1)";
+//
+//    $types = 'i';
+//    $params = [$userId];
+//
+//    $result = getDataFromDb($link, $sqlCount, $types, $params);
+//    $row = createSmartyRecAssocArr($result);
+//
+//    return getOffsetAndTotalPages($page, $row['topics_count']);
+//}
+//
+///**
+// * Запрос offset для пагинации постов в профиле
+// * @param $page int номер страницы
+// * @param $userId int id пользователя
+// * @return array
+// */
+//function getPaginationPostsProfile($page, $userId) {
+//    $link = createConnection();
+//    $sqlCount = "SELECT COUNT(*) AS posts_count FROM posts WHERE user_id = ?)";
+//
+//    $types = 'i';
+//    $params = [$userId];
+//
+//    $result = getDataFromDb($link, $sqlCount, $types, $params);
+//    $row = createSmartyRecAssocArr($result);
+//
+//    return getOffsetAndTotalPages($page, $row['posts_count']);
+//}
+
+function getUserById($userId) {
+    $link = createConnection();
+    $sql = "SELECT * FROM users WHERE id = ? LIMIT 1";
+    $types = 'i';
+    $params = [$userId];
+
+    $result = getDataFromDb($link, $sql, $types, $params);
+    if (!$result) {
+        return [
+            'success' => false,
+            'message' => 'Ошибка запроса данных пользователя'
+        ];
+    }
+
+    return createSmartyRecAssocArr($result)[0];
 }

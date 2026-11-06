@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-10-30 20:40:10
+/* Smarty version 5.8.5, created on 2026-11-06 08:37:04
   from 'file:C:\OSPanel\domains\testforum\views\default\../includes/categories.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6ae4d67ade7d39_85817215',
+  'unifunc' => 'content_6aed6780615e64_56140574',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '665e0fbec7146721e12f2b35423427519801e10f' => 
     array (
       0 => 'C:\\OSPanel\\domains\\testforum\\views\\default\\../includes/categories.tpl',
-      1 => 1793382010,
+      1 => 1793943424,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   array (
   ),
 ))) {
-function content_6ae4d67ade7d39_85817215 (\Smarty\Template $_smarty_tpl) {
+function content_6aed6780615e64_56140574 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\includes';
 if ($_smarty_tpl->getValue('allCategories')) {?>
     <a href="/" class="cat-pill <?php if (!$_smarty_tpl->getValue('catId')) {?>active<?php }?>">
@@ -32,7 +32,7 @@ $foreach0DoElse = true;
 foreach ($_from ?? [] as $_smarty_tpl->getVariable('category')->value) {
 $foreach0DoElse = false;
 ?>
-    <a href="/?id=<?php echo $_smarty_tpl->getValue('category')['id'];?>
+    <a href="/?cat_id=<?php echo $_smarty_tpl->getValue('category')['id'];?>
 " class="cat-pill <?php if ($_smarty_tpl->getValue('catId') == $_smarty_tpl->getValue('category')['id']) {?>active<?php }?>">
         <?php echo $_smarty_tpl->getValue('category')['name'];?>
 

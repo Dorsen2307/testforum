@@ -11,12 +11,12 @@ include_once '../models/TopicsModel.php';
  */
 function indexAction($smarty) {
     $arrUser = isset($_SESSION['user']) ? $_SESSION['user'] : false;
-    $categoryId = isset($_GET['id']) ? $_GET['id'] : null;
+    $categoryId = isset($_GET['cat_id']) ? $_GET['cat_id'] : null;
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
     $allCategories = getAllCategories();
 
-    if (!isset($_GET['id'])) {
+    if (!isset($_GET['cat_id'])) {
         $pagData = getPaginationTopics($page);
         $allTopics = getAllTopics($pagData['offset']);
     } else {

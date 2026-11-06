@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-11-02 14:13:53
+/* Smarty version 5.8.5, created on 2026-11-06 12:11:30
   from 'file:C:\OSPanel\domains\testforum\views\default\../includes/pagination.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6ae870714d33c0_72933817',
+  'unifunc' => 'content_6aed99c2130a30_77520670',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'e74cc833847ab16fa15c14c9f3144bc0c125e691' => 
     array (
       0 => 'C:\\OSPanel\\domains\\testforum\\views\\default\\../includes/pagination.tpl',
-      1 => 1793618033,
+      1 => 1793956239,
       2 => 'file',
     ),
   ),
@@ -20,15 +20,19 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   array (
   ),
 ))) {
-function content_6ae870714d33c0_72933817 (\Smarty\Template $_smarty_tpl) {
+function content_6aed99c2130a30_77520670 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\includes';
 ?><nav class="pagination">
     <?php if ($_smarty_tpl->getValue('totalPages') > 1) {?>
         <?php if ($_smarty_tpl->getValue('page') > 1) {?>
-            <a href="/?<?php if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&id=<?php echo $_smarty_tpl->getValue('topic')['id'];?>
-&<?php }?>page=<?php echo $_smarty_tpl->getValue('page')-1;
-if ($_smarty_tpl->getValue('catId')) {?>&id=<?php echo $_smarty_tpl->getValue('catId');
-}?>" class="number-page">
+            <a href="/?<?php if ($_smarty_tpl->getValue('isProfile')) {?>controller=user&action=profile&user_id=<?php echo $_smarty_tpl->getValue('userId');?>
+&tab=<?php echo $_smarty_tpl->getValue('tab');
+}
+if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&topic_id=<?php echo $_smarty_tpl->getValue('topic')['id'];
+}?>&page=<?php echo $_smarty_tpl->getValue('page')-1;
+if ($_smarty_tpl->getValue('catId')) {?>&cat_id=<?php echo $_smarty_tpl->getValue('catId');
+}?>" class="number-page"
+            >
                 ← Назад
             </a>
         <?php }?>
@@ -44,10 +48,14 @@ $_smarty_tpl->getVariable('i')->first = $_smarty_tpl->getVariable('i')->iteratio
 
                 </span>
             <?php } else { ?>
-                <a href="/?<?php if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&id=<?php echo $_smarty_tpl->getValue('topic')['id'];?>
-&<?php }?>page=<?php echo $_smarty_tpl->getValue('i');
-if ($_smarty_tpl->getValue('catId')) {?>&id=<?php echo $_smarty_tpl->getValue('catId');
-}?>" class="number-page">
+                <a href="/?<?php if ($_smarty_tpl->getValue('isProfile')) {?>controller=user&action=profile&user_id=<?php echo $_smarty_tpl->getValue('userId');?>
+&tab=<?php echo $_smarty_tpl->getValue('tab');
+}
+if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&topic_id=<?php echo $_smarty_tpl->getValue('topic')['id'];
+}?>&page=<?php echo $_smarty_tpl->getValue('i');
+if ($_smarty_tpl->getValue('catId')) {?>&cat_id=<?php echo $_smarty_tpl->getValue('catId');
+}?>" class="number-page"
+                >
                     <?php echo $_smarty_tpl->getValue('i');?>
 
                 </a>
@@ -57,10 +65,14 @@ if ($_smarty_tpl->getValue('catId')) {?>&id=<?php echo $_smarty_tpl->getValue('c
 ?>
 
         <?php if ($_smarty_tpl->getValue('page') < $_smarty_tpl->getValue('totalPages')) {?>
-            <a href="/?<?php if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&id=<?php echo $_smarty_tpl->getValue('topic')['id'];?>
-&<?php }?>page=<?php echo $_smarty_tpl->getValue('page')+1;
-if ($_smarty_tpl->getValue('catId')) {?>&id=<?php echo $_smarty_tpl->getValue('catId');
-}?>" class="number-page">
+            <a href="/?<?php if ($_smarty_tpl->getValue('isProfile')) {?>controller=user&action=profile&user_id=<?php echo $_smarty_tpl->getValue('userId');?>
+&tab=<?php echo $_smarty_tpl->getValue('tab');
+}
+if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&topic_id=<?php echo $_smarty_tpl->getValue('topic')['id'];
+}?>&page=<?php echo $_smarty_tpl->getValue('page')+1;
+if ($_smarty_tpl->getValue('catId')) {?>&cat_id=<?php echo $_smarty_tpl->getValue('catId');
+}?>" class="number-page"
+            >
                 Вперёд →
             </a>
         <?php }?>

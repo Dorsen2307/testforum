@@ -13,7 +13,10 @@ const DB_USER = 'root';
 const DB_PASS = '';
 
 // Константы пагинации
-const PER_PAGE = 2;
+const PER_PAGE_TOPICS = 2;
+const PER_PAGE_POSTS = PER_PAGE_TOPICS;
+const PER_PAGE_TOPICS_PROFILE = PER_PAGE_TOPICS;
+const PER_PAGE_POSTS_PROFILE = PER_PAGE_TOPICS;
 
 // Роли
 const ROLE = ['user', 'admin', 'moderator'];

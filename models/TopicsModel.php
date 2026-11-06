@@ -4,32 +4,44 @@
  */
 /**
  * Запрос всех тем или по id категории
- * @return bool|mysqli
+ * @return bool|array
  */
-function getAllTopics($offset, $id=null) {
+function getAllTopics($offset, $catId=null, $userId=null) {
     $link = createConnection();
+    $types = '';
+    $params = [];
 
-    if ($id !== null) {
-        $sql = "SELECT t.*, u.username 
-                FROM topics t 
-                INNER JOIN users u ON t.user_id = u.id 
-                WHERE t.category_id = ? AND t.is_active = 1 
-                ORDER BY t.id DESC
-                LIMIT ? OFFSET ?";
+    $sql = "SELECT t.*";
 
-        $types = 'iii';
-        $params = [$id, PER_PAGE, $offset];
-    } else {
-        $sql = "SELECT t.*, u.username 
-                FROM topics t 
-                INNER JOIN users u ON t.user_id = u.id 
-                WHERE t.is_active = 1
-                ORDER BY t.id DESC
-                LIMIT ? OFFSET ?";
-
-        $types = 'ii';
-        $params = [PER_PAGE, $offset];
+    if ($userId === null) {
+        $sql .= ", u.username";
     }
+
+    $sql .= " FROM topics t";
+
+    if ($userId === null) {
+        $sql .= " INNER JOIN users u ON t.user_id = u.id ";
+    }
+
+    $sql .= " WHERE t.is_active = 1";
+
+    if ($userId !== null) {
+        $sql .= " AND t.user_id = ? ";
+        $types .= 'i';
+        $params[] = $userId;
+    }
+
+    if ($catId !== null) {
+        $sql .= " AND t.category_id = ?";
+        $types .= 'i';
+        $params[] = $catId;
+    }
+
+    $sql .= " ORDER BY t.id DESC
+             LIMIT ? OFFSET ?";
+    $types .= 'ii';
+
+    array_push($params, PER_PAGE_TOPICS, $offset);
 
     $result = getDataFromDb($link, $sql, $types, $params);
 
@@ -96,7 +108,7 @@ function createNewTopic($categoryId, $userId, $title, $content, $postCount) {
 
 /**
  * Запрос постов по id темы
- * @return bool|mysqli
+ * @return bool|array
  */
 function getTopicWithPosts($offset, $topicId) {
     $link = createConnection();
@@ -109,9 +121,9 @@ function getTopicWithPosts($offset, $topicId) {
                 tu.username AS topic_author,
                 
                 p.id AS post_id,
-                p.parent_id,
                 p.content AS post_content,
                 p.created_at AS post_created,
+                pu.id AS author_id,
                 pu.username AS post_author
             FROM topics t
             JOIN users tu ON t.user_id = tu.id
@@ -122,8 +134,7 @@ function getTopicWithPosts($offset, $topicId) {
             LIMIT ? OFFSET ?";
 
     $types = 'iii';
-    $params = [$topicId, PER_PAGE, $offset];
-
+    $params = [$topicId, PER_PAGE_POSTS, $offset];
 
     $result = getDataFromDb($link, $sql, $types, $params);
     if (!$result) {
@@ -152,9 +163,9 @@ function getTopicWithPosts($offset, $topicId) {
         if ($row['post_id'] !== null) {
             $posts[] = [
                 'id' => (int)$row['post_id'],
-                'parent_id' => (int)$row['parent_id'],
                 'content' => $row['post_content'],
                 'created_at' => $row['post_created'],
+                'author_id' => $row['author_id'],
                 'author' => $row['post_author']
             ];
         }
@@ -164,35 +175,44 @@ function getTopicWithPosts($offset, $topicId) {
 }
 
 /**
- * Запрос offset для пагинации тем
- * @param $link
+ * Запрос offset для пагинации тем по id категории или пользователя
  * @param $page
- * @return array
+ * @param $catId
+ * @param $userId
+ * @return array|bool
  */
-function getPaginationTopics($page, $catId=null) {
+function getPaginationTopics($page, $catId=null, $userId=null) {
     $link = createConnection();
+    $types = '';
+    $params = [];
+
     // Считаем общее число записей
     $sql = "SELECT COUNT(*) AS total FROM topics WHERE is_active = 1";
     if ($catId !== null) {
         $sql .= " AND category_id = ?";
+        $types .= 'i';
+        $params[] = $catId;
     }
-    if ($catId !== null) {
-        $types = 'i';
-        $params = [$catId];
-        $total = getDataFromDb($link, $sql, $types, $params);
-    } else {
-        $total = mysqli_query($link, $sql);
+    if ($userId !== null) {
+        $sql .= " AND user_id = ?";
+        $types .= 'i';
+        $params[] = $userId;
     }
 
+    $total = getDataFromDb($link, $sql, $types, $params);
+
+    if (!$total) {
+        return false;
+    }
     $total = createSmartyRecAssocArr($total)[0];
 
-    $totalPages = max(1, (int)ceil($total['total'] / PER_PAGE));
+    $totalPages = max(1, (int)ceil($total['total'] / PER_PAGE_TOPICS));
 
     if ($page > $totalPages) {
         $page = $totalPages;
     }
 
-    $offset = ($page - 1) * PER_PAGE;
+    $offset = ($page - 1) * PER_PAGE_TOPICS;
 
     return [
         'offset' => $offset,

@@ -3,7 +3,7 @@
         Все
     </a>
     {foreach $allCategories as $category}
-    <a href="/?id={$category['id']}" class="cat-pill {if $catId==$category['id']}active{/if}">
+    <a href="/?cat_id={$category['id']}" class="cat-pill {if $catId==$category['id']}active{/if}">
         {$category['name']}
     </a>
     {/foreach}

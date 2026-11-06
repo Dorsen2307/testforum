@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-11-02 13:42:46
+/* Smarty version 5.8.5, created on 2026-11-06 12:16:53
   from 'file:topic.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6ae8692631a6c0_32940076',
+  'unifunc' => 'content_6aed9b05588884_21632429',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '85f0a02e439b93c007f06c4594bcfd973cdddf14' => 
     array (
       0 => 'topic.tpl',
-      1 => 1793616165,
+      1 => 1793956611,
       2 => 'file',
     ),
   ),
@@ -21,11 +21,12 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
     'file:../includes/head.tpl' => 1,
     'file:../includes/header.tpl' => 1,
     'file:../includes/section.tpl' => 1,
+    'file:../includes/posts.tpl' => 1,
     'file:../includes/pagination.tpl' => 1,
     'file:../includes/footer.tpl' => 1,
   ),
 ))) {
-function content_6ae8692631a6c0_32940076 (\Smarty\Template $_smarty_tpl) {
+function content_6aed9b05588884_21632429 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\default';
 ?><!doctype html>
 <html lang="ru">
@@ -63,47 +64,8 @@ $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\default';
         </div>
 
         <!-- Список постов -->
-        <?php if ($_smarty_tpl->getSmarty()->getModifierCallback('count')($_smarty_tpl->getValue('posts')) > 0) {?>
-            <div class="posts-list">
-                <?php
-$_from = $_smarty_tpl->getSmarty()->getRuntime('Foreach')->init($_smarty_tpl, $_smarty_tpl->getValue('posts'), 'post');
-$foreach0DoElse = true;
-foreach ($_from ?? [] as $_smarty_tpl->getVariable('post')->value) {
-$foreach0DoElse = false;
+        <?php $_smarty_tpl->renderSubTemplate('file:../includes/posts.tpl', $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), (int) 0, $_smarty_current_dir);
 ?>
-                    <article class="post-item" id="post-<?php echo $_smarty_tpl->getValue('post')['id'];?>
-">
-                        <div class="post-header">
-                            <span class="post-author"><strong><?php echo htmlspecialchars((string)$_smarty_tpl->getValue('post')['author'], ENT_QUOTES, 'UTF-8', true);?>
-</strong></span>
-                            <span class="post-date"><?php echo $_smarty_tpl->getValue('post')['user_created_at'];?>
-</span>
-                        </div>
-
-                        <div class="post-content">
-                            <!-- Если нужны авто-переносы строк -->
-                            <?php echo nl2br((string) $_smarty_tpl->getValue('post')['content'], (bool) 1);?>
-
-                        </div>
-
-                        <!-- Кнопка ответа (если пользователь авторизован) -->
-                        <?php if ($_smarty_tpl->getValue('arrUser')) {?>
-                            <div class="post-actions">
-                                <button type="button" class="btn btn-sm btn-outline" onclick="openReplyForm(<?php echo $_smarty_tpl->getValue('post')['id'];?>
-)">Ответить</button>
-                            </div>
-                        <?php }?>
-                    </article>
-                <?php
-}
-$_smarty_tpl->getSmarty()->getRuntime('Foreach')->restore($_smarty_tpl, 1);?>
-            </div>
-        <?php } else { ?>
-            <div class="empty-state">
-                В этой теме пока нет сообщений. Будь первым!
-            </div>
-        <?php }?>
-
         <?php $_smarty_tpl->renderSubTemplate('file:../includes/pagination.tpl', $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), (int) 0, $_smarty_current_dir);
 ?>
 

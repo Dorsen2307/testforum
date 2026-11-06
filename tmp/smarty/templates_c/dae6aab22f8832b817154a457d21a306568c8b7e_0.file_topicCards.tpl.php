@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-10-30 19:47:19
+/* Smarty version 5.8.5, created on 2026-11-06 08:34:58
   from 'file:C:\OSPanel\domains\testforum\views\default\../includes/topicCards.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6ae4ca1721e193_41518523',
+  'unifunc' => 'content_6aed670215e669_52966958',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'dae6aab22f8832b817154a457d21a306568c8b7e' => 
     array (
       0 => 'C:\\OSPanel\\domains\\testforum\\views\\default\\../includes/topicCards.tpl',
-      1 => 1793378773,
+      1 => 1793943297,
       2 => 'file',
     ),
   ),
@@ -21,7 +21,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
     'file:../includes/pagination.tpl' => 1,
   ),
 ))) {
-function content_6ae4ca1721e193_41518523 (\Smarty\Template $_smarty_tpl) {
+function content_6aed670215e669_52966958 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\includes';
 ?><div class="error" id="error_topic"><?php echo $_smarty_tpl->getValue('errorMessageTopic');?>
 </div>
@@ -34,7 +34,7 @@ $foreach0DoElse = false;
 ?>
     <li class="topic-row">
         <div class="topic-card-title">
-            <a href="/?controller=topic&id=<?php echo $_smarty_tpl->getValue('topic')['id'];?>
+            <a href="/?controller=topic&topic_id=<?php echo $_smarty_tpl->getValue('topic')['id'];?>
 "><?php echo $_smarty_tpl->getValue('topic')['title'];?>
 </a>
         </div>

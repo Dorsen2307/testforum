@@ -10,7 +10,7 @@ include_once '../models/CategoriesModel.php';
  * @param $smarty
  */
 function indexAction($smarty) {
-    $topicId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    $topicId = isset($_GET['topic_id']) ? (int)$_GET['topic_id'] : 0;
     $arrUser = isset($_SESSION['user']) ? $_SESSION['user'] : false;
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
@@ -32,7 +32,7 @@ function indexAction($smarty) {
 
     if ($data['topic']) $data['topic'] = replaceDate($data['topic']);
     if ($data['posts']) $data['posts'] = replaceDate($data['posts']);
-
+logging('index', $data);
 
     $smarty->assign('arrUser', $arrUser);
     $smarty->assign('topic', $data['topic']);
