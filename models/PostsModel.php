@@ -11,7 +11,7 @@
  * @param $parentId
  * @return array|false[]
  */
-function addPost($topicId, $userId, $content, $parentId = null) {
+function addPost($topicId, $userId, $content) {
     // Валидация длины текста
     $content = trim($content);
     if (mb_strlen($content) < 5) {
@@ -22,46 +22,27 @@ function addPost($topicId, $userId, $content, $parentId = null) {
     }
 
     $link = createConnection();
+    mysqli_begin_transaction($link);
     // Вставляем пост
-    $sqlInsert = "INSERT INTO posts (topic_id, user_id, content, parent_id) VALUES (?, ?, ?, " . ($parentId ? '?' : 'NULL') . ")";
-    $stmtInsert = mysqli_prepare($link, $sqlInsert);
-    if (!$stmtInsert) {
-        return [
-            'success' => false,
-            'errors' => ['content' => 'Ошибка запроса на добавление сообщения']
-        ];
-    }
+    $sqlInsert = "INSERT INTO posts (topic_id, user_id, content) VALUES (?, ?, ?)";
+    $types = 'iis';
+    $params = [$topicId, $userId, $content];
 
-    if ($parentId) {
-        mysqli_stmt_bind_param($stmtInsert, "iisi", $topicId, $userId, $content, $parentId);
-    } else {
-        mysqli_stmt_bind_param($stmtInsert, "iis", $topicId, $userId, $content);
-    }
+    $newId = insertAndGetId($link, $sqlInsert, $types, $params);
 
-    $execInsert = mysqli_stmt_execute($stmtInsert);
+    // Увеличиваем счетчик в теме и обновляем дату изменения
+    $sqlUpdate = "UPDATE topics  SET post_count = post_count + 1, last_post_at = NOW() WHERE id = ?";
+    $types = 'i';
+    $params = [$topicId];
+    $execUpdate = executeQuery($link, $sqlUpdate, $types, $params);
 
-    // Увеличиваем счетчик в теме
-    $sqlUpdate = "UPDATE topics SET post_count = post_count + 1 WHERE id = ?";
-    $stmtUpdate = mysqli_prepare($link, $sqlUpdate);
-    if (!$stmtUpdate) {
-        return [
-            'success' => false,
-            'errors' => ['content' => 'Ошибка запроса на увеличение счетчика в теме']
-        ];
-    }
-    mysqli_stmt_bind_param($stmtUpdate, "i", $topicId);
-    $execUpdate = mysqli_stmt_execute($stmtUpdate);
-
-    if ($execInsert && $execUpdate) {
-        $newId = mysqli_stmt_insert_id($stmtInsert);
-        mysqli_stmt_close($stmtInsert);
-        mysqli_stmt_close($stmtUpdate);
+    if ($newId && $execUpdate) {
+        mysqli_commit($link);
         return [
             'success' => true,
             'id' => $newId];
     } else {
-        mysqli_stmt_close($stmtInsert);
-        mysqli_stmt_close($stmtUpdate);
+        mysqli_rollback($link);
         return [
             'success' => false,
             'errors' => ['content' => 'Ошибка сохранения поста']
@@ -100,8 +81,13 @@ function getAllPosts($offset, $topicId = null, $userId = null) {
     $types .= 'ii';
     array_push($params, PER_PAGE_POSTS, $offset);
 
+    mysqli_begin_transaction($link);
     $result = getDataFromDb($link, $sql, $types, $params);
-    if (!$result) {return false;}
+    if (!$result) {
+        mysqli_rollback($link);
+        return false;
+    }
+    mysqli_commit($link);
 
     return createSmartyRecAssocArr($result);
 }

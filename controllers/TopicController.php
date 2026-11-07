@@ -32,7 +32,6 @@ function indexAction($smarty) {
 
     if ($data['topic']) $data['topic'] = replaceDate($data['topic']);
     if ($data['posts']) $data['posts'] = replaceDate($data['posts']);
-logging('index', $data);
 
     $smarty->assign('arrUser', $arrUser);
     $smarty->assign('topic', $data['topic']);

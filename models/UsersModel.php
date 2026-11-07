@@ -15,13 +15,16 @@ function registrationNewUser($name, $email, $pwHash, $role='user') {
     $role = htmlspecialchars($role);
 
     $link = createConnection();
+
+    mysqli_begin_transaction($link);
     $sql = "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)";
     $types = 'sss';
     $params = [$name, $email, $pwHash, $role];
 
-    $result = executeQuery($link, $sql, $params, $types);
+    $resultInsert = executeQuery($link, $sql, $params, $types);
 
-    if ($result) {
+    if ($resultInsert) {
+        mysqli_commit($link);
         $sql = "SELECT * FROM users WHERE (email = ? and password_hash = ?) LIMIT 1";
         $types = 'ss';
         $params = [$email, $pwHash];
@@ -35,18 +38,19 @@ function registrationNewUser($name, $email, $pwHash, $role='user') {
             $result['success'] = false;
         }
     } else {
+        mysqli_rollback($link);
         $result['success'] = false;
     }
     return $result;
 }
 
 /**
- * Авторизация пользователя
+ * Запрос пользователя для авторизации
  * @param $email string электронная почта пользователя
  * @param $pwd string пароль
  * @return array|bool массив данных пользователя
  */
-function loginUser($email, $pwd) {
+function loginUser($email) {
     $email = htmlspecialchars($email);
     $link = createConnection();
     $sql = "SELECT * FROM users WHERE email = ? LIMIT 1";
@@ -202,7 +206,7 @@ function checkUserPassword($email, $password) {
 }
 
 /**
- * Проверка почты на наличие дубликата
+ * Запрос id пользователя с похожим email
  * @param $email string
  * @return array|bool массив (строка из таблицы users / пустой массив)
  */
@@ -219,17 +223,13 @@ function checkUserEmail($email) {
 }
 
 /**
- * Проверяет на наличие/отсутствие пользователей
- * @return bool
+ * Запрос всех пользователей
+ * @return bool|mysqli
  */
-function firstUser() {
+function getUser() {
     $link = createConnection();
     $sql = "SELECT * FROM users";
-    $result = mysqli_query($link, $sql);
-    if (mysqli_num_rows($result) < 0 || !$result) {
-        return false;
-    }
-    return true;
+    return mysqli_query($link, $sql);
 }
 
 /**
@@ -298,6 +298,7 @@ function updateUser($id, $username, $email, $password, $pwdHash, $about, $photo)
             'errors' => ['new-data' => 'Не введены новые данные']
         ];
     }
+
     $link = createConnection();
     mysqli_begin_transaction($link); // открываем транзакцию
     $resultUpdate = executeQuery($link, $sqlUpdate, $types, $params);
@@ -338,45 +339,12 @@ function updateUser($id, $username, $email, $password, $pwdHash, $about, $photo)
 
     return $resultQuery;
 }
-//
-///**
-// * Запрос offset для пагинации тем в профиле
-// * @param $page int номер страницы
-// * @param $userId int id пользователя
-// * @return array
-// */
-//function getPaginationTopicsProfile($page, $userId) {
-//    $link = createConnection();
-//    $sqlCount = "SELECT COUNT(*) AS topics_count FROM topics WHERE user_id = ? AND is_active = 1)";
-//
-//    $types = 'i';
-//    $params = [$userId];
-//
-//    $result = getDataFromDb($link, $sqlCount, $types, $params);
-//    $row = createSmartyRecAssocArr($result);
-//
-//    return getOffsetAndTotalPages($page, $row['topics_count']);
-//}
-//
-///**
-// * Запрос offset для пагинации постов в профиле
-// * @param $page int номер страницы
-// * @param $userId int id пользователя
-// * @return array
-// */
-//function getPaginationPostsProfile($page, $userId) {
-//    $link = createConnection();
-//    $sqlCount = "SELECT COUNT(*) AS posts_count FROM posts WHERE user_id = ?)";
-//
-//    $types = 'i';
-//    $params = [$userId];
-//
-//    $result = getDataFromDb($link, $sqlCount, $types, $params);
-//    $row = createSmartyRecAssocArr($result);
-//
-//    return getOffsetAndTotalPages($page, $row['posts_count']);
-//}
 
+/**
+ * Запрос пользователя по id
+ * @param $userId
+ * @return array
+ */
 function getUserById($userId) {
     $link = createConnection();
     $sql = "SELECT * FROM users WHERE id = ? LIMIT 1";

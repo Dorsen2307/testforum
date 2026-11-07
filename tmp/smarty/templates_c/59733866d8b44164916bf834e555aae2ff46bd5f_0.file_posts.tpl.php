@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-11-06 11:15:48
+/* Smarty version 5.8.5, created on 2026-11-07 10:55:32
   from 'file:C:\OSPanel\domains\testforum\views\includes\../includes/posts.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6aed8cb4e63624_32488805',
+  'unifunc' => 'content_6aeed974b940e9_52210465',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '59733866d8b44164916bf834e555aae2ff46bd5f' => 
     array (
       0 => 'C:\\OSPanel\\domains\\testforum\\views\\includes\\../includes/posts.tpl',
-      1 => 1793952903,
+      1 => 1793956611,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   array (
   ),
 ))) {
-function content_6aed8cb4e63624_32488805 (\Smarty\Template $_smarty_tpl) {
+function content_6aeed974b940e9_52210465 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\includes';
 if ($_smarty_tpl->getValue('posts')) {?>
     <div class="profile-panel" id="panel-comments" role="tabpanel">
@@ -31,7 +31,8 @@ $foreach0DoElse = true;
 foreach ($_from ?? [] as $_smarty_tpl->getVariable('post')->value) {
 $foreach0DoElse = false;
 ?>
-                <li class="post-item">
+                <li class="post-item" id="post-<?php echo $_smarty_tpl->getValue('post')['id'];?>
+">
                     <div class="post-header">
                         <?php if ($_smarty_tpl->getValue('tab')) {?>
                         <span class="post-author"><strong><?php echo $_smarty_tpl->getValue('post')['author'];?>

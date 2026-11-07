@@ -14,7 +14,6 @@ function addAction() {
     $topicId = isset($_POST['topic_id']) ? $_POST['topic_id'] : false;
     $userId = isset($_SESSION['user']) ? $_SESSION['user']['id'] : false;
     $content = isset($_POST['content']) ? $_POST['content'] : false;
-    $parentId = isset($_POST['parent_id']) ? $_POST['parent_id'] : false;
 
     if (empty($content)) {
         http_response_code(400);
@@ -25,7 +24,7 @@ function addAction() {
         exit();
     }
 
-    $data = addPost($topicId, $userId, $content, !$parentId ?: $parentId);
+    $data = addPost($topicId, $userId, $content);
 
     if (isset($data['errors'])) {
         http_response_code(400);

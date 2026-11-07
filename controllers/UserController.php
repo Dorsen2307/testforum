@@ -21,8 +21,9 @@ function indexAction($smarty) {
  */
 function templateregistrationAction($smarty) {
     if (!isset($_SESSION['user'])) {
-        if (!firstUser()) {
-            $smarty->assing('role', ROLE[1]);
+        $user = getUser();
+        if (!$user || mysqli_num_rows($user) < 0)  { // Если пользователей еще не зарегистрировано
+            $smarty->assing('role', ROLE[1]); // Назначаем роль администратора
         }
 
         $smarty->assign('flagReg', true);
@@ -123,11 +124,11 @@ function authorizationAction() {
         exit;
     }
 
-    $userData = loginUser($email, $password);
+    $userData = loginUser($email);
 
-    if ($userData['success']) {
+    if ($userData['success'] && password_verify($password, $userData['password_hash'])) {
         $userData = $userData[0];
-        $userName = $userData['username'] ?: $userData['email'];
+        $userName = $userData['username'];
         $_SESSION['user'] = $userData;
         $_SESSION['user']['displayName'] = $userName;
 

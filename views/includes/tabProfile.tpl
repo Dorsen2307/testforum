@@ -17,7 +17,7 @@
             {foreach $allTopics as $topic}
             <li class="topic-row">
                 <div>
-                    <div class="topic-card-title"><a href="#">{$topic['title']}</a></div>
+                    <div class="topic-card-title"><a href="/?controller=topic&topic_id={$topic['id']}">{$topic['title']}</a></div>
                     <div class="topic-card-meta">Создана {$topic['user_created_at']}</div>
                     <div class="topic-card-meta">Последние изменения {$topic['user_last_post_at']}</div>
                 </div>

@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-11-06 10:42:52
+/* Smarty version 5.8.5, created on 2026-11-07 10:57:29
   from 'file:C:\OSPanel\domains\testforum\views\default\../includes/tabProfile.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6aed84fc1b9c03_22990086',
+  'unifunc' => 'content_6aeed9e9f05eb8_69778112',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'f6a21410794861da33bca37b8de1ae61bffc335d' => 
     array (
       0 => 'C:\\OSPanel\\domains\\testforum\\views\\default\\../includes/tabProfile.tpl',
-      1 => 1793950929,
+      1 => 1794038249,
       2 => 'file',
     ),
   ),
@@ -22,7 +22,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
     'file:../includes/posts.tpl' => 1,
   ),
 ))) {
-function content_6aed84fc1b9c03_22990086 (\Smarty\Template $_smarty_tpl) {
+function content_6aeed9e9f05eb8_69778112 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\includes';
 if ($_smarty_tpl->getValue('tab') === 'about') {?>
     <!-- Панель: О себе -->
@@ -49,7 +49,8 @@ $foreach0DoElse = false;
 ?>
             <li class="topic-row">
                 <div>
-                    <div class="topic-card-title"><a href="#"><?php echo $_smarty_tpl->getValue('topic')['title'];?>
+                    <div class="topic-card-title"><a href="/?controller=topic&topic_id=<?php echo $_smarty_tpl->getValue('topic')['id'];?>
+"><?php echo $_smarty_tpl->getValue('topic')['title'];?>
 </a></div>
                     <div class="topic-card-meta">Создана <?php echo $_smarty_tpl->getValue('topic')['user_created_at'];?>
 </div>

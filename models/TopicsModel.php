@@ -90,20 +90,9 @@ function createNewTopic($categoryId, $userId, $title, $content, $postCount) {
     $link = createConnection();
     $isActive = 1;
     $sql = "INSERT INTO topics (category_id, user_id, title, content, post_count, is_active) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($link, $sql); // Создаем объект statement для обработки
-    if (!$stmt) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    mysqli_stmt_bind_param($stmt, 'iissii', $categoryId, $userId, $title, $content, $postCount, $isActive); // Привязываем значения
-    $exec = mysqli_stmt_execute($stmt); // Выполняем запрос
-    if (!$exec) {
-        mysqli_stmt_close($stmt);
-        return false;
-    }
-    $result = mysqli_stmt_insert_id($stmt); // Достаем id результата
-    mysqli_stmt_close($stmt);
-    return $result;
+    $types = 'iissii';
+    $params = [$categoryId, $userId, $title, $content, $postCount, $isActive];
+    return insertAndGetId($link, $sql, $types, $params);
 }
 
 /**
