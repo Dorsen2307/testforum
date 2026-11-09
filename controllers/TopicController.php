@@ -5,6 +5,7 @@
 include_once '../models/TopicsModel.php';
 include_once '../models/PostsModel.php';
 include_once '../models/CategoriesModel.php';
+include_once '../models/AdminModel.php';
 /**
  * Метод формирования страницы темы
  * @param $smarty
@@ -19,9 +20,9 @@ function indexAction($smarty) {
         exit;
     }
 
-    $pagData = getPaginationPosts($page, $topicId);
+    $pagination = getPaginationPosts($page, $topicId);
 
-    $data = getTopicWithPosts($pagData['offset'], $topicId);
+    $data = getTopicWithPosts($pagination['offset'], $topicId);
 
     if (!$data['topic']) {
         // Тема не найдена
@@ -37,8 +38,7 @@ function indexAction($smarty) {
     $smarty->assign('topic', $data['topic']);
     $smarty->assign('posts', $data['posts']);
     $smarty->assign('isPost', true);
-    $smarty->assign('page', $page);
-    $smarty->assign('totalPages', $pagData['totalPages']);
+    $smarty->assign('pagination', $pagination);
 
     loadTemplate($smarty, 'topic');
 }
@@ -60,7 +60,20 @@ function createtopicAction() {
     $title = isset($_POST['title']) ? trim($_POST['title']) : '';
     $content = isset($_POST['content']) ? trim($_POST['content']) : '';
     $categoryId = isset($_POST['category_id']) ? intval($_POST['category_id']) : null;
-    $userId = isset($_SESSION['user']) ? intval($_SESSION['user']['id']) : null;
+    $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+
+    if (!$user) {
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Пользователь не авторизован'
+        ]);
+        exit;
+    }
+
+    $userId = $user['id'];
+    $userName = $user['username'];
+
     // todo - доработать обработку токена
 
     $errors = checkCreateTopicParams($title, $content, $categoryId);
@@ -75,10 +88,18 @@ function createtopicAction() {
         exit;
     }
 
-    $result = createNewTopic($categoryId, $userId, $title, $content, 0);
-    if ($result) {
+    $topicId = createNewTopic($categoryId, $userId, $title, $content, 0);
+    if ($topicId) {
+        $data = replaceDate(getTopicWithCategory($topicId));
+
+        logActivity($userId, 'topic_created',$topicId, [
+            'nickname' => $userName,
+            'topicName' => $data['title'],
+            'catName' => $data['name']
+        ]);
+
         echo json_encode([
-            'topicId' => $result,
+            'topicId' => $topicId,
             'success' => true,
             'message' => 'Тема успешно создана!'
         ]);

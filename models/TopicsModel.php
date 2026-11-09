@@ -3,10 +3,10 @@
  * Модель тем
  */
 /**
- * Запрос всех тем или по id категории
+ * Запрос всех тем, либо по id категории/id пользователя/id темы
  * @return bool|array
  */
-function getAllTopics($offset, $catId=null, $userId=null) {
+function getAllTopics($offset, $catId=null, $userId=null, $topicId=null) {
     $link = createConnection();
     $types = '';
     $params = [];
@@ -37,6 +37,12 @@ function getAllTopics($offset, $catId=null, $userId=null) {
         $params[] = $catId;
     }
 
+    if ($topicId !== null) {
+        $sql .= " AND t.id = ?";
+        $types .= 'i';
+        $params[] = $topicId;
+    }
+
     $sql .= " ORDER BY t.id DESC
              LIMIT ? OFFSET ?";
     $types .= 'ii';
@@ -47,6 +53,22 @@ function getAllTopics($offset, $catId=null, $userId=null) {
 
     if (!$result) return false;
     return createSmartyRecAssocArr($result);
+}
+
+function getTopicWithCategory($topicId) {
+    $sql = "SELECT t.*, c.*
+            FROM topics t
+            JOIN categories c 
+                ON t.category_id = c.id
+            WHERE t.id = ?
+    ";
+    $types = 'i';
+    $params[] = $topicId;
+
+    $link = createConnection();
+    $result = getDataFromDb($link, $sql, $types, $params);
+    if (!$result) return false;
+    return  createSmartyRecAssocArr($result)[0];
 }
 
 /**
@@ -195,16 +217,25 @@ function getPaginationTopics($page, $catId=null, $userId=null) {
     }
     $total = createSmartyRecAssocArr($total)[0];
 
-    $totalPages = max(1, (int)ceil($total['total'] / PER_PAGE_TOPICS));
+    $totalCount = (int)$total['total'];
+    $totalPages = max(1, (int)ceil($totalCount / PER_PAGE_TOPICS));
 
     if ($page > $totalPages) {
         $page = $totalPages;
+    } elseif ($page < 1) {
+        $page = 1;
     }
 
     $offset = ($page - 1) * PER_PAGE_TOPICS;
 
+    // Логика компактной комбинации
+    $pageList = getPageList($page, $totalPages);
+
     return [
         'offset' => $offset,
-        'totalPages' => $totalPages
+        'totalPages'  => $totalPages,
+        'currentPage' => $page,
+        'pageList'    => $pageList, // массив: [1, '...', 4, 5, 6, '...', 10]
+        'totalCount'  => $totalCount,
     ];
 }

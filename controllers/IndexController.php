@@ -17,11 +17,11 @@ function indexAction($smarty) {
     $allCategories = getAllCategories();
 
     if (!isset($_GET['cat_id'])) {
-        $pagData = getPaginationTopics($page);
-        $allTopics = getAllTopics($pagData['offset']);
+        $pagination = getPaginationTopics($page);
+        $allTopics = getAllTopics($pagination['offset']);
     } else {
-        $pagData = getPaginationTopics($page, $categoryId);
-        $allTopics = getAllTopics($pagData['offset'], $categoryId);
+        $pagination = getPaginationTopics($page, $categoryId);
+        $allTopics = getAllTopics($pagination['offset'], $categoryId);
         $smarty->assign('catId', $categoryId);
     }
 
@@ -33,8 +33,7 @@ function indexAction($smarty) {
     $smarty->assign('allCategories', $allCategories);
     $smarty->assign('allTopics', $allTopics);
     $smarty->assign('arrUser', $arrUser);
-    $smarty->assign('page', $page);
-    $smarty->assign('totalPages', $pagData['totalPages']);
+    $smarty->assign('pagination', $pagination);
 
     loadTemplate($smarty, 'index');
 }

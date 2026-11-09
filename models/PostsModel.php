@@ -129,7 +129,8 @@ function getPaginationPosts($page, $topId=null, $userId=null) {
 
     $total = createSmartyRecAssocArr($total)[0];
 
-    $totalPages = max(1, (int)ceil($total['total'] / PER_PAGE_POSTS));
+    $totalCount = $total['total'];
+    $totalPages = max(1, (int)ceil($totalCount / PER_PAGE_POSTS));
 
     if ($page > $totalPages) {
         $page = $totalPages;
@@ -137,8 +138,13 @@ function getPaginationPosts($page, $topId=null, $userId=null) {
 
     $offset = ($page - 1) * PER_PAGE_POSTS;
 
+    $pageList = getPageList($page, $totalPages);
+
     return [
         'offset' => $offset,
-        'totalPages' => $totalPages
+        'totalPages' => $totalPages,
+        'total' => $totalCount,
+        'currentPage' => $page,
+        'pageList' => $pageList
     ];
 }

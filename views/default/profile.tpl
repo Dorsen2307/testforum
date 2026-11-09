@@ -21,7 +21,14 @@
                 {/if}
             </div>
             <div class="profile-head">
-                <h2 class="profile-login">{$arrProfile['username']} <span class="profile-meta">({$arrProfile['roleName']})</span></h2>
+                <h2 class="profile-login">
+                    {$arrProfile['username']}
+                    {if $isAdmin}
+                    <a class="profile-meta" href="/?controller=admin">({$arrProfile['roleName']})</a>
+                    {else}
+                    <span class="profile-meta">({$arrProfile['roleName']})</span>
+                    {/if}
+                </h2>
                 <div class="profile-meta">
                     <span>Почта: <a href="mailto:{$arrProfile['email']}">{$arrProfile['email']}</a></span>
                     <span class="meta-sep">•</span>

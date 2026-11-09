@@ -78,3 +78,4 @@ function insertAndGetId($link, $sql, $types, $params) {
 
     return $id;
 }
+

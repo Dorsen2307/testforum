@@ -12,8 +12,13 @@ const DB_NAME = 'testforum';
 const DB_USER = 'root';
 const DB_PASS = '';
 
+// Админка
+const LIMIT_RECENT_ACTIVITY = 20; // количество выводимых событий
+
 // Константы пагинации
-const PER_PAGE_TOPICS = 2;
+const MAX_COUNT_PAGES = 5; // максимальное количество страниц в пагинации для подстановки '...'
+const SHOW_AROUND = 2; // количество страниц слева и справа от текущей
+const PER_PAGE_TOPICS = 5;
 const PER_PAGE_POSTS = PER_PAGE_TOPICS;
 const PER_PAGE_TOPICS_PROFILE = PER_PAGE_TOPICS;
 const PER_PAGE_POSTS_PROFILE = PER_PAGE_TOPICS;

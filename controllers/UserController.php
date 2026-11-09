@@ -5,6 +5,7 @@
 include_once '../models/UsersModel.php';
 include_once '../models/TopicsModel.php';
 include_once '../models/PostsModel.php';
+include_once '../models/AdminModel.php';
 /**
  * Формирование профиля пользователя
  * @param $smarty object
@@ -82,6 +83,11 @@ function registrationAction() {
         $_SESSION['user']['displayName'] = $userName;
         $_SESSION['user']['role'] = $role;
 
+        logActivity($userData['id'], 'user_registered',null, [
+            'nickname' => $userData['username']
+
+        ]);
+
         echo json_encode([
             'success' => true,
             'message' => 'Регистрация успешна!',
@@ -126,7 +132,7 @@ function authorizationAction() {
 
     $userData = loginUser($email);
 
-    if ($userData['success'] && password_verify($password, $userData['password_hash'])) {
+    if ($userData['success'] && password_verify($password, $userData[0]['password_hash'])) {
         $userData = $userData[0];
         $userName = $userData['username'];
         $_SESSION['user'] = $userData;
@@ -182,26 +188,30 @@ function profileAction($smarty) {
         $smarty->assign('arrProfile', $arrOtherUser);
     }
 
+    if ($arrUser['role'] === 'admin') {
+        $smarty->assign('isAdmin', true);
+    }
+
     if ($tab == 'topics') {
-        $pagData = getPaginationTopics($page, null, $userId);
-        if ($pagData) {
-            $allTopics = getAllTopics($pagData['offset'], null, $userId);
+        $pagination = getPaginationTopics($page, null, $userId);
+        if ($pagination) {
+            $allTopics = getAllTopics($pagination['offset'], null, $userId);
             $allTopics = replaceDate($allTopics);
         }
         $smarty->assign('userId', $userId);
         $smarty->assign('allTopics', $allTopics);
-        $smarty->assign('totalPages', $pagData['totalPages']);
+        $smarty->assign('pagination', $pagination);
     }
 
     if ($tab == 'posts') {
-        $pagData = getPaginationPosts($page, null, $userId);
-        if ($pagData) {
-            $allPosts = getAllPosts($pagData['offset'], null, $userId);
+        $pagination = getPaginationPosts($page, null, $userId);
+        if ($pagination) {
+            $allPosts = getAllPosts($pagination['offset'], null, $userId);
             $allPosts = replaceDate($allPosts);
         }
         $smarty->assign('userId', $userId);
         $smarty->assign('posts', $allPosts);
-        $smarty->assign('totalPages', $pagData['totalPages']);
+        $smarty->assign('pagination', $pagination);
     }
 
     $arrUser['displayName'] = $arrUser['username'];
@@ -210,7 +220,6 @@ function profileAction($smarty) {
     $smarty->assign('isCurrentUser', $isCurrentUser);
     $smarty->assign('isProfile', true);
     $smarty->assign('tab', $tab);
-    $smarty->assign('page', $page);
 
     loadTemplate($smarty, 'profile');
 }
@@ -226,6 +235,7 @@ function updateuserdataAction() {
     }
 
     $id = isset($_SESSION['user']['id']) ? intval($_SESSION['user']['id']) : 0;
+    $oldDataUser = getUserById($id);
     $username = isset($_POST['login']) ? $_POST['login'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
@@ -263,6 +273,11 @@ function updateuserdataAction() {
         $_SESSION['user'] = $userData;
         $_SESSION['user']['displayName'] = $userData['username'];
         $_SESSION['user']['photo'] = $userData['photo'];
+
+        logActivity($id, 'user_changed_data',null, [
+            'nickname' => $userData['username'],
+            'old_name' => $oldDataUser['username'] !== $userData['username'] ? $oldDataUser['username'] : null
+        ]);
 
         echo json_encode([
             'success' => true,
