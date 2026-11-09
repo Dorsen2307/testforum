@@ -39,26 +39,29 @@ function redirect($url = "/") {
 // Форматирование даты в темах
 function formatRelativeDate($timestamp) {
     $now = time();
-    $diff = $now - $timestamp;
-    if ($diff < 60) {
-        return 'Только что';
+
+    // Тот же календарный день
+    if (date('Y-m-d', $timestamp) === date('Y-m-d', $now)) {
+        return 'Сегодня, ' . date('H:i', $timestamp);
+    }
+
+    // Предыдущий календарный день
+    if (date('Y-m-d', $timestamp) === date('Y-m-d', strtotime('-1 day', $now))) {
+        return 'Вчера, ' . date('H:i', $timestamp);
     }
 
     $day = 86400;
+    // Разница по календарным дням, а не по секундам:
+    // 23:59 сегодня и 00:01 завтра — это 1 день, а не 2 секунды
+    $daysDiff = (int) floor((strtotime(date('Y-m-d', $now)) - strtotime(date('Y-m-d', $timestamp))) / $day);
 
-    if ($diff < $day) {
-        $date = date('Сегодня, H:i', $timestamp);
-    } elseif ($diff < 2 * $day) {
-        $date = date('Вчера, H:i', $timestamp);
-    } elseif ($diff < 7 * $day) {
-        $days = floor($diff / $day);
-        $date = "$days " . plural($days, 'день', 'дня', 'дней') . ' назад, ' . date('H:i', $timestamp);
-    } else {
-        // Для старых дат вернём обычное форматирование
-        $date = date('j M, H:i', $timestamp); // 25 Окт, 14:22
+    if ($daysDiff < 7) {
+        $days = plural($daysDiff, 'день', 'дня', 'дней');
+        return "$days назад, " . date('H:i', $timestamp);
     }
 
-    return $date;
+    // Для старых дат вернём обычное форматирование
+    return date('j M, H:i', $timestamp);
 }
 
 // Склонение: 1 день, 2 дня, 5 дней
@@ -158,18 +161,47 @@ function logging($fileName, $var) {
 
     file_put_contents(__DIR__ . '/' . $fileName . '.log', $message, FILE_APPEND);
 }
+//===================================
 
 
-function getOffsetAndTotalPages($page, $count) {
-    $totalPages = max(1, (int)ceil($count / PER_PAGE));
-    if ($page > $totalPages) {
-        $page = $totalPages;
+/**
+ * Логика компактной пагинации
+ * @param $page int текущая страница
+ * @param $totalPages int всего страниц
+ * @return array
+ */
+function getPageList($page, $totalPages) {
+    $pageList = [];
+    $gap = '...'; // многоточие
+
+    if ($totalPages <= MAX_COUNT_PAGES) {
+        // Страниц немного — выводим все подряд без многоточий
+        $pageList = range(1, $totalPages);
+    } else {
+        $start = max(2, $page - SHOW_AROUND);
+        $end   = min($totalPages - 1, $page + SHOW_AROUND);
+
+        // Первая страница
+        $pageList[] = 1;
+
+        // Многоточие после первой — только если между ней и блоком реально есть пропуск
+        if ($start > 2) {
+            $pageList[] = $gap;
+        }
+
+        // Блок вокруг текущей
+        for ($i = $start; $i <= $end; $i++) {
+            $pageList[] = $i;
+        }
+
+        // Многоточие перед последней — только если между блоком и последней реально есть пропуск
+        if ($end < $totalPages - 1) {
+            $pageList[] = $gap;
+        }
+
+        // Последняя страница
+        $pageList[] = $totalPages;
     }
 
-    $offset = ($page - 1) * PER_PAGE;
-
-    return [
-        'offset' => $offset,
-        'totalPages' => $totalPages
-    ];
+    return $pageList;
 }
