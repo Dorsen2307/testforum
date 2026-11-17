@@ -139,3 +139,16 @@ function templatecreatetopicAction($smarty) {
         redirect("/");
     }
 }
+
+/**
+ * Удаление темы
+ * @param $smarty
+ */
+function deletetopicAction($smarty) {
+    $arrUser = (isset($_SESSION['user'])) ? $_SESSION['user'] : false;
+    if (!$arrUser) {Header("Location: /");
+    }
+    if ($arrUser['role'] === 'admin') {
+
+    }
+}

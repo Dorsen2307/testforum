@@ -4,23 +4,15 @@
     {include '../includes/head.tpl'}
 </head>
 <body>
-
-<!-- Разделы: переключение через радиокнопки -->
-<input type="radio" name="tab" id="tab-dashboard" class="tab-input" checked>
-<input type="radio" name="tab" id="tab-users" class="tab-input">
-<input type="radio" name="tab" id="tab-topics" class="tab-input">
-<input type="radio" name="tab" id="tab-moderation" class="tab-input">
-<input type="radio" name="tab" id="tab-settings" class="tab-input">
-
 <!-- Сайдбар -->
 <aside class="sidebar">
     <div class="logo">⚙ <span class="txt">Форум · Админ</span></div>
     <nav class="nav">
-        <label for="tab-dashboard" class="nav-dashboard">🏠 <span class="txt">Обзор</span></label>
-        <label for="tab-users" class="nav-users">👥 <span class="txt">Пользователи</span></label>
-        <label for="tab-topics" class="nav-topics">💬 <span class="txt">Топики</span></label>
-        <label for="tab-moderation" class="nav-moderation">🚩 <span class="txt">Модерация</span> <span class="badge-nav">3</span></label>
-        <label for="tab-settings" class="nav-settings">🔧 <span class="txt">Настройки</span></label>
+        <a href="/?controller=admin" class="nav-dashboard {if $tab=='view'}active{/if}">🏠 <span class="txt">Обзор</span></a>
+        <a href="/?controller=admin&action=users" class="nav-users {if $tab=='users'}active{/if}">👥 <span class="txt">Пользователи</span></a>
+        <a href="/?controller=admin&action=topics" class="nav-topics {if $tab=='topics'}active{/if}">💬 <span class="txt">Топики</span></a>
+        <a href="/?controller=admin&action=moderation" class="nav-moderation {if $tab=='moderation'}active{/if}">🚩 <span class="txt">Модерация</span> <span class="badge-nav">3</span></a>
+        <a href="/?controller=admin&action=settings" class="nav-settings {if $tab=='settings'}active{/if}">🔧 <span class="txt">Настройки</span></a>
     </nav>
     <div class="admin-user">
         <b>admin_ivan</b>
@@ -31,19 +23,20 @@
 <main>
     <!-- Верхняя панель -->
     <div class="topbar">
-        <h1 id="page-title">Обзор</h1>
+        <h1 id="page-title">{$tabTitle}</h1>
         <input type="search" class="search" placeholder="Поиск по форуму… (Ctrl+K)">
         <button class="btn-bell" title="Уведомления">🔔</button>
     </div>
 
     <div class="content">
-
+        {if $tab=='view'}
         <!-- ======== ОБЗОР ======== -->
         <section class="panel" id="panel-dashboard">
             <div class="stats">
-                <div class="stat"><div class="num">{$view['total_users']}</div><div class="label">Пользователей</div></div>
-                <div class="stat green"><div class="num">{$view['total_posts']}</div><div class="label">Сообщений</div></div>
-                <div class="stat amber"><div class="num">{$view['total_topics']}</div><div class="label">Топиков</div></div>
+                {assign var="stats" value=$data[0]}
+                <div class="stat"><div class="num">{$stats['total_users']}</div><div class="label">Пользователей</div></div>
+                <div class="stat green"><div class="num">{$stats['total_posts']}</div><div class="label">Сообщений</div></div>
+                <div class="stat amber"><div class="num">{$stats['total_topics']}</div><div class="label">Топиков</div></div>
                 <div class="stat red"><div class="num">3</div><div class="label">Жалоб в очереди</div></div>
             </div>
 
@@ -54,7 +47,9 @@
                 </ul>
             </div>
         </section>
+        {/if}
 
+        {if $tab=='users'}
         <!-- ======== ПОЛЬЗОВАТЕЛИ ======== -->
         <section class="panel" id="panel-users">
             <div class="toolbar">
@@ -79,43 +74,16 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td><b>admin_ivan</b><div class="sub">Последний вход: сегодня</div></td>
-                            <td>ivan@example.com</td>
-                            <td><span class="badge red">Администратор</span></td>
-                            <td>1 204</td><td>12.03.2022</td>
-                            <td><a href="#" class="btn btn-sm btn-ghost">Профиль</a> <a href="#" class="btn btn-sm btn-ghost">Права</a></td>
-                        </tr>
-                        <tr>
-                            <td><b>Мария</b><div class="sub">Последний вход: 2 ч назад</div></td>
-                            <td>maria@example.com</td>
-                            <td><span class="badge blue">Модератор</span></td>
-                            <td>892</td><td>05.07.2023</td>
-                            <td><a href="#" class="btn btn-sm btn-ghost">Профиль</a> <a href="#" class="btn btn-sm btn-danger">Бан</a></td>
-                        </tr>
-                        <tr>
-                            <td><b>crypto_dude</b><div class="sub">Бан истекает 14.11</div></td>
-                            <td>spam@trash.io</td>
-                            <td><span class="badge amber">Забанен</span></td>
-                            <td>3</td><td>01.11.2026</td>
-                            <td><a href="#" class="btn btn-sm btn-ghost">Профиль</a> <a href="#" class="btn btn-sm btn-green">Разбанить</a></td>
-                        </tr>
-                        <tr>
-                            <td><b>vova88</b><div class="sub">Последний вход: вчера</div></td>
-                            <td>vova88@mail.ru</td>
-                            <td><span class="badge gray">Пользователь</span></td>
-                            <td>14</td><td>05.11.2026</td>
-                            <td><a href="#" class="btn btn-sm btn-ghost">Профиль</a> <a href="#" class="btn btn-sm btn-danger">Бан</a></td>
-                        </tr>
+                        {include '../includes/cardUsersAdmin.tpl'}
                         </tbody>
                     </table>
                 </div>
-                <div class="pagination">
-                    <a href="#">←</a><a href="#" class="active">1</a><a href="#">2</a><a href="#">3</a><a href="#">→</a>
-                </div>
+                {include "../includes/pagination.tpl"}
             </div>
         </section>
+        {/if}
 
+        {if $tab=='topics'}
         <!-- ======== ТОПИКИ ======== -->
         <section class="panel" id="panel-topics">
             <div class="toolbar">
@@ -136,30 +104,15 @@
                         <tr><th>Заголовок</th><th>Раздел</th><th>Автор</th><th>Ответов</th><th>Статус</th><th>Действия</th></tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td><b>Обсуждение релиза 2.1</b></td>
-                            <td>Веб-разработка</td><td>Алексей</td><td>47</td>
-                            <td><span class="badge green">Открыт</span></td>
-                            <td><a href="#" class="btn btn-sm btn-ghost">Открыть</a> <a href="#" class="btn btn-sm btn-danger">Удалить</a></td>
-                        </tr>
-                        <tr>
-                            <td><b>Помогите с htaccess</b></td>
-                            <td>Веб-разработка</td><td>Мария</td><td>3</td>
-                            <td><span class="badge green">Открыт</span></td>
-                            <td><a href="#" class="btn btn-sm btn-ghost">Открыть</a> <a href="#" class="btn btn-sm btn-ghost">Закрепить</a></td>
-                        </tr>
-                        <tr>
-                            <td><b>[СПАМ] Лучшие курсы крипты!!!</b></td>
-                            <td>Общение</td><td>crypto_dude</td><td>0</td>
-                            <td><span class="badge red">Скрыт</span></td>
-                            <td><a href="#" class="btn btn-sm btn-ghost">Открыть</a> <a href="#" class="btn btn-sm btn-danger">Удалить</a></td>
-                        </tr>
+                        {include '../includes/cardTopicsAdmin.tpl'}
                         </tbody>
                     </table>
                 </div>
             </div>
         </section>
+        {/if}
 
+        {if $tab=='moderation'}
         <!-- ======== МОДЕРАЦИЯ ======== -->
         <section class="panel" id="panel-moderation">
             <div class="card">
@@ -205,7 +158,9 @@
                 </div>
             </div>
         </section>
+        {/if}
 
+        {if $tab=='settings'}
         <!-- ======== НАСТРОЙКИ ======== -->
         <section class="panel" id="panel-settings">
             <div class="settings-grid">
@@ -242,6 +197,7 @@
                 <a href="#" class="btn btn-ghost">Отменить</a>
             </div>
         </section>
+        {/if}
 
     </div>
 </main>

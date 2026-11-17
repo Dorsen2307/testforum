@@ -1,9 +1,9 @@
 {if $pagination.totalPages > 1}
 <nav class="pagination">
     {if $pagination.currentPage > 1}
-        <a href="/?{if $isProfile}controller=user&action=profile&user_id={$userId}&tab={$tab}{/if}{if $isPost}controller=topic&topic_id={$topic['id']}{/if}&page={$pagination.currentPage - 1}{if $catId}&cat_id={$catId}{/if}" class="number-page"
+        <a href="/?{if $isProfile}controller=user&action=profile&user_id={$userId}&tab={$tab}{/if}{if $isPost}controller=topic&topic_id={$topic['id']}{/if}{if $isAdministration}controller=admin&action=users{/if}&page={$pagination.currentPage - 1}{if $catId}&cat_id={$catId}{/if}"
         >
-            ← Назад
+            ←
         </a>
     {/if}
 
@@ -11,9 +11,9 @@
         {if $p eq '...'}
             <span class="gap">...</span>
         {elseif $p eq $pagination.currentPage}
-            <span class="current number-page-select">{$p}</span>
+            <span class="active">{$p}</span>
         {else}
-            <a href="/?{if $isProfile}controller=user&action=profile&user_id={$userId}&tab={$tab}{/if}{if $isPost}controller=topic&topic_id={$topic['id']}{/if}&page={$p}{if $catId}&cat_id={$catId}{/if}" class="number-page"
+            <a href="/?{if $isProfile}controller=user&action=profile&user_id={$userId}&tab={$tab}{/if}{if $isPost}controller=topic&topic_id={$topic['id']}{/if}{if $isAdministration}controller=admin&action=users{/if}&page={$p}{if $catId}&cat_id={$catId}{/if}"
             >
                 {$p}
             </a>
@@ -21,9 +21,9 @@
     {/foreach}
 
     {if $pagination.currentPage < $pagination.totalPages}
-        <a href="/?{if $isProfile}controller=user&action=profile&user_id={$userId}&tab={$tab}{/if}{if $isPost}controller=topic&topic_id={$topic['id']}{/if}&page={$pagination.currentPage + 1}{if $catId}&cat_id={$catId}{/if}" class="number-page"
+        <a href="/?{if $isProfile}controller=user&action=profile&user_id={$userId}&tab={$tab}{/if}{if $isPost}controller=topic&topic_id={$topic['id']}{/if}{if $isAdministration}controller=admin&action=users{/if}&page={$pagination.currentPage + 1}{if $catId}&cat_id={$catId}{/if}"
         >
-            Вперёд →
+            →
         </a>
     {/if}
 </nav>

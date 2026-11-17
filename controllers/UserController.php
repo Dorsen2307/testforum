@@ -22,7 +22,7 @@ function indexAction($smarty) {
  */
 function templateregistrationAction($smarty) {
     if (!isset($_SESSION['user'])) {
-        $user = getUser();
+        $user = getUsers();
         if (!$user || mysqli_num_rows($user) < 0)  { // Если пользователей еще не зарегистрировано
             $smarty->assing('role', ROLE[1]); // Назначаем роль администратора
         }
@@ -134,9 +134,22 @@ function authorizationAction() {
 
     if ($userData['success'] && password_verify($password, $userData[0]['password_hash'])) {
         $userData = $userData[0];
+
+        $link = createConnection();
+        $banInfo = isUserBanned($link, $userData['id']);
+        if ($banInfo['banned']) {
+            echo json_encode([
+                'success' => false,
+                'message' => "Вы заблокированы: {$banInfo['reason']}. Срок: " . ($banInfo['expires_at'] ?? 'навсегда')
+            ]);
+            exit;
+        }
+
         $userName = $userData['username'];
         $_SESSION['user'] = $userData;
         $_SESSION['user']['displayName'] = $userName;
+        // обновляем дату входа
+        updateLastLogin($userData['id']);
 
         echo json_encode([
             'success' => true,
@@ -179,12 +192,12 @@ function profileAction($smarty) {
     if (!$otherUserId || (int)$arrUser['id'] === (int)$otherUserId) {
         $isCurrentUser = true; // Это наш профиль
         $userId = $arrUser['id'];
-        $arrUser['roleName'] = $arrUser['role'] === 'user' ? 'Пользователь' : ($arrUser['role'] === 'admin' ? 'Администратор' : 'Модератор');
+        $arrUser['roleName'] = replaceRoleToName($arrUser['role']);
         $smarty->assign('arrProfile', $arrUser);
     } else {
         $userId = $otherUserId;
         $arrOtherUser = getUserById($otherUserId);
-        $arrOtherUser['roleName'] = $arrOtherUser['role'] === 'user' ? 'Пользователь' : ($arrOtherUser['role'] === 'admin' ? 'Администратор' : 'Модератор');
+        $arrOtherUser['roleName'] = replaceRoleToName($arrOtherUser['role']);
         $smarty->assign('arrProfile', $arrOtherUser);
     }
 
@@ -195,7 +208,7 @@ function profileAction($smarty) {
     if ($tab == 'topics') {
         $pagination = getPaginationTopics($page, null, $userId);
         if ($pagination) {
-            $allTopics = getAllTopics($pagination['offset'], null, $userId);
+            $allTopics = getAllActiveTopics($pagination['offset'], null, $userId);
             $allTopics = replaceDate($allTopics);
         }
         $smarty->assign('userId', $userId);

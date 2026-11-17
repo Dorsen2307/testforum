@@ -51,9 +51,14 @@ function loginUser() {
         dataType: 'json',
         success: function(data) {
             if (data.success) {
+                alert(data.message);
                 window.location.href = '/';
             } else {
-                showFormErrors(data.errors || {});
+                if (!data.errors) {
+                    alert(data.message);
+                } else {
+                    showFormErrors(data.errors || {});
+                }
             }
         },
         error: function(xhr, status, error) {

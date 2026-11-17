@@ -11,13 +11,13 @@ function getData() {
         SELECT
             (SELECT COUNT(*) FROM users) AS total_users,
             (SELECT COUNT(*) FROM posts) AS total_posts,
-            (SELECT COUNT(*) FROM topics) AS total_topics;
+            (SELECT COUNT(*) FROM topics) AS total_topics
     ";
 
     $link = createConnection();
     $result = mysqli_query($link, $sqlView);
 
-    return createSmartyRecAssocArr($result)[0];
+    return createSmartyRecAssocArr($result);
 }
 
 /**
@@ -62,4 +62,96 @@ function getRecentActivity(int $limit = LIMIT_RECENT_ACTIVITY, int $offset = 0):
     }
 
     return replaceDate($activity);
+}
+
+/**
+ * Запрос для пагинации пользователей в админке
+ * @param $page
+ * @return array|bool
+ */
+function getPaginationUsers($page) {
+    $link = createConnection();
+    $types = '';
+    $params = [];
+//todo разработать логику пагинации
+    // Считаем общее число записей
+    $sql = "SELECT COUNT(*) AS total FROM users";
+
+    $total = getDataFromDb($link, $sql, $types, $params);
+
+    $total = createSmartyRecAssocArr($total)[0];
+
+    $totalCount = $total['total'];
+    $totalPages = max(1, (int)ceil($totalCount / PER_PAGE_POSTS));
+
+    if ($page > $totalPages) {
+        $page = $totalPages;
+    } elseif ($page < 1) {
+        $page = 1;
+    }
+
+    $offset = ($page - 1) * PER_PAGE_POSTS;
+
+    $pageList = getPageList($page, $totalPages);
+
+    return [
+        'offset' => $offset,
+        'totalPages' => $totalPages,
+        'total' => $totalCount,
+        'currentPage' => $page,
+        'pageList' => $pageList
+    ];
+}
+
+/**
+ * Наложение бана
+ * @param mysqli $link
+ * @param int $targetUserId
+ * @param int|null $adminId
+ * @param string $reason
+ * @param int|null $days
+ * @return bool
+ */
+function banUser(mysqli $link, int $targetUserId, ?int $adminId, string $reason, ?int $days = null): bool
+{
+    $expiresAt = $days === null ? null : date('Y-m-d H:i:s', strtotime("+{$days} days"));
+
+    // 1. Вставляем запись в bans
+    $sql = "INSERT INTO bans (user_id, admin_id, reason, expires_at) VALUES (?, ?, ?, ?)";
+    $types = 'iisi';
+    $params = [$targetUserId, $adminId, $reason, $expiresAt];
+    $result = executeQuery($link, $sql, $types, $params);
+    if (!$result) {
+        return false;
+    }
+
+    // 2. Обновляем флаг в users (для быстрых списков)
+    $sql = "UPDATE users SET is_banned = 1 WHERE id = ?";
+    $types = 'i';
+    $params = [$targetUserId];
+    $result = executeQuery($link, $sql, $types, $params);
+    return $result;
+}
+
+/**
+ * Снятие бана
+ * @param mysqli $link
+ * @param int $userId
+ * @return bool
+ */
+function unbanUser(mysqli $link, int $userId): bool
+{
+    // Помечаем бан как неактивный (история остаётся)
+    $sql = "UPDATE bans SET is_active = 0 WHERE user_id = ? AND is_active = 1";
+    $types = 'i';
+    $params = [$userId];
+    $ok1 = executeQuery($link, $sql, $types, $params);
+
+    // Снимаем флаг
+    $sql = "UPDATE users SET is_banned = 0 WHERE id = ?";
+    $types = 'i';
+    $params = [$userId];
+    $ok2 = executeQuery($link, $sql, $types, $params);
+
+    return $ok1 && $ok2;
 }

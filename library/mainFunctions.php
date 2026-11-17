@@ -57,7 +57,7 @@ function formatRelativeDate($timestamp) {
 
     if ($daysDiff < 7) {
         $days = plural($daysDiff, 'день', 'дня', 'дней');
-        return "$days назад, " . date('H:i', $timestamp);
+        return "$daysDiff $days назад, " . date('H:i', $timestamp);
     }
 
     // Для старых дат вернём обычное форматирование
@@ -93,7 +93,7 @@ function replaceDate($arr) {
             }
 
             foreach ($row as $col => $val) {
-                if ($col === 'created_at' || $col === 'last_post_at') {
+                if ($col === 'created_at' || $col === 'last_post_at' || $col === 'last_login') {
                     // strtotime вернёт false, если дата битая — тогда оставляем как есть
                     $timestamp = strtotime($val);
                     if ($timestamp !== false) {
@@ -204,4 +204,20 @@ function getPageList($page, $totalPages) {
     }
 
     return $pageList;
+}
+
+/**
+ * Преобразование ролей в нормальные названия
+ */
+function replaceRoleToName($role) {
+    switch ($role) {
+        case 'admin':
+            return 'Администратор';
+        case 'moderator':
+            return 'Модератор';
+        case 'user':
+            return 'Пользователь';
+        case 'banned':
+            return 'Забанен';
+    }
 }

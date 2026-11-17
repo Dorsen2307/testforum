@@ -29,17 +29,46 @@
         </li>
     {/if}
 
+    {if $item['type'] === 'user_registered'}
+        <li>
+            <span>
+                Зарегистрировался новый пользователь <b>{$item.meta.nickname}</b>
+            </span>
+            <time>{$item.user_created_at}</time>
+        </li>
+    {/if}
+
+    {if $item['type'] === 'user_banned'}
+        <li>
+            <span>
+                <b>{$item.meta.nickname}</b>
+                получил бан на 7 дней ({$item.meta.reason})
+            </span>
+            <time>{$item.user_created_at}</time>
+        </li>
+    {/if}
+
+    {if $item['type'] === 'user_unbanned'}
+        <li>
+            <span>С
+                <b>{$item.meta.nickname}</b>
+                снят бан
+            </span>
+            <time>{$item.user_created_at}</time>
+        </li>
+    {/if}
+
+    {if $item['type'] === 'topic_deleted'}
+        <li>
+            <span>Тема
+                <b>«{$item.meta.topicName}»</b>
+                удалена
+            </span>
+            <time>{$item.user_created_at}</time>
+        </li>
+    {/if}
+
+{*todo вывод событий в админке*}
 
 {/foreach}
-{*<li><span><b>Мария</b> создала топик «Помогите с htaccess» в разделе «Веб-разработка»</span><time>5 мин назад</time>*}
-{*</li>*}
 
-{*<li><span><b>crypto_dude</b> получил бан на 7 дней (спам)</span><time>1 ч назад</time>*}
-{*</li>*}
-
-
-
-{*<li><span>Зарегистрировался новый пользователь <b>vova88</b></span><time>3 ч назад</time>*}
-{*</li>*}
-
-'', 'user_registered', 'user_banned', 'user_unbanned', 'topic_deleted', 'report_resolved'

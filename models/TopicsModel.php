@@ -3,10 +3,10 @@
  * Модель тем
  */
 /**
- * Запрос всех тем, либо по id категории/id пользователя/id темы
+ * Запрос всех активных тем, либо по id категории/id пользователя/id темы
  * @return bool|array
  */
-function getAllTopics($offset, $catId=null, $userId=null, $topicId=null) {
+function getAllActiveTopics($offset, $catId=null, $userId=null, $topicId=null) {
     $link = createConnection();
     $types = '';
     $params = [];
@@ -55,6 +55,39 @@ function getAllTopics($offset, $catId=null, $userId=null, $topicId=null) {
     return createSmartyRecAssocArr($result);
 }
 
+/**
+ * Запрос всех тем c названиями категорий и именами авторов
+ * @return bool|array
+ */
+function getAllTopicsWithCatAndUsername($offset) {
+    $link = createConnection();
+    $types = '';
+    $params = [];
+
+    $sql = "SELECT 
+                t.*,
+                u.username AS author,
+                c.name AS category_name
+            FROM topics t
+            LEFT JOIN users u ON t.user_id = u.id
+            LEFT JOIN categories c ON t.category_id = c.id
+            ORDER BY t.id DESC
+            LIMIT ? OFFSET ?
+            ";
+    $types .= 'ii';
+    $params = [PER_PAGE_TOPICS, $offset];
+
+    $result = getDataFromDb($link, $sql, $types, $params);
+
+    if (!$result) return false;
+    return createSmartyRecAssocArr($result);
+}
+
+/**
+ * Запрос топика по id с категорией
+ * @param $topicId
+ * @return bool|array
+ */
 function getTopicWithCategory($topicId) {
     $sql = "SELECT t.*, c.*
             FROM topics t

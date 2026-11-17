@@ -18,10 +18,10 @@ function indexAction($smarty) {
 
     if (!isset($_GET['cat_id'])) {
         $pagination = getPaginationTopics($page);
-        $allTopics = getAllTopics($pagination['offset']);
+        $allTopics = getAllActiveTopics($pagination['offset']);
     } else {
         $pagination = getPaginationTopics($page, $categoryId);
-        $allTopics = getAllTopics($pagination['offset'], $categoryId);
+        $allTopics = getAllActiveTopics($pagination['offset'], $categoryId);
         $smarty->assign('catId', $categoryId);
     }
 

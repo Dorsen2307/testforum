@@ -67,6 +67,15 @@ function loginUser($email) {
     return $result;
 }
 
+function updateLastLogin($userId) {
+    $link = createConnection();
+    $sql = "UPDATE users SET last_login = now() WHERE id = ?";
+    $types = 'i';
+    $params = [$userId];
+    $result = executeQuery($link, $sql, $types, $params);
+    return $result;
+}
+
 /**
  * Проверка параметров для регистрации пользователя
  * @param $username string никнейм пользователя
@@ -226,12 +235,33 @@ function checkUserEmail($email) {
  * Запрос всех пользователей
  * @return bool|mysqli
  */
-function getUser() {
+function getUsers($offset=null) {
     $link = createConnection();
-    $sql = "SELECT * FROM users";
-    return mysqli_query($link, $sql);
-}
+    $types = '';
+    $params = [];
 
+    $sql = "SELECT 
+                u.id,
+                u.username,
+                u.email,
+                u.role,
+                u.created_at,
+                u.last_login,
+                u.is_banned, 
+                COUNT(p.id) AS user_posts_count 
+            FROM users u
+            LEFT JOIN posts p ON p.user_id = u.id
+            GROUP BY u.id, u.username, u.email, u.role
+            ORDER BY u.id DESC
+            ";
+    if ($offset !== null) {
+        $sql .= " LIMIT ? OFFSET ?";
+        $types = 'ii';
+        $params = [PER_PAGE_USERS_ADMIN, $offset];
+    }
+    $result = getDataFromDb($link, $sql, $types, $params);
+    return createSmartyRecAssocArr($result);
+}
 /**
  * Обновляет данные пользователя
  * @param $id int id пользователя
@@ -352,6 +382,7 @@ function getUserById($userId) {
     $params = [$userId];
 
     $result = getDataFromDb($link, $sql, $types, $params);
+
     if (!$result) {
         return [
             'success' => false,
@@ -359,5 +390,40 @@ function getUserById($userId) {
         ];
     }
 
-    return createSmartyRecAssocArr($result)[0];
+    $result = createSmartyRecAssocArr($result)[0];
+    return $result;
+}
+
+/**
+ * Проверка бана при входе
+ * @param mysqli $link
+ * @param int $userId
+ * @return array|false
+ */
+function isUserBanned(mysqli $link, int $userId): array
+{
+    $sql = "
+        SELECT id, reason, expires_at, created_at
+        FROM bans
+        WHERE user_id = ?
+          AND is_active = 1
+          AND (expires_at IS NULL OR expires_at > NOW())
+        ORDER BY created_at DESC
+        LIMIT 1
+    ";
+    $types = 'i';
+    $params = [$userId];
+    $result = getDataFromDb($link, $sql, $types, $params);
+    $row = mysqli_fetch_assoc($result);
+
+    if (!$row) {
+        return ['banned' => false];
+    }
+
+    return [
+        'banned'      => true,
+        'reason'      => $row['reason'],
+        'expires_at'  => $row['expires_at'],
+        'created_at'  => $row['created_at'],
+    ];
 }

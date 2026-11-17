@@ -37,7 +37,7 @@ function addAction() {
         ]);
         exit();
     } else {
-        $topic = getAllTopics(0, null, null, $topicId)[0];
+        $topic = getAllActiveTopics(0, null, null, $topicId)[0];
         logActivity($userId, 'post_created',$data['id'], [
             'nickname' => $userName,
             'topicName' => $topic['title']
