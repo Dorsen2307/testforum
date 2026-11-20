@@ -221,3 +221,43 @@ function replaceRoleToName($role) {
             return 'Забанен';
     }
 }
+
+/**
+ * Создание массива для пагинации
+ * @param mysqli $link соединение с БД
+ * @param string $sql запрос
+ * @param string $types типы параметров для вставки в запрос
+ * @param array $params массив параметров для вставки в запрос
+ * @param int $page номер текущей страницы
+ * @return array|bool
+ */
+function getPagination($link, $sql, $types, $params, $page, $numberRecordsPerPage) {
+    $total = getDataFromDb($link, $sql, $types, $params);
+
+    if (!$total) {
+        return false;
+    }
+    $total = createSmartyRecAssocArr($total)[0];
+
+    $totalCount = (int)$total['total'];
+    $totalPages = max(1, (int)ceil($totalCount / $numberRecordsPerPage));
+
+    if ($page > $totalPages) {
+        $page = $totalPages;
+    } elseif ($page < 1) {
+        $page = 1;
+    }
+
+    $offset = ($page - 1) * $numberRecordsPerPage;
+
+    // Логика компактной комбинации
+    $pageList = getPageList($page, $totalPages);
+
+    return [
+        'offset' => $offset, // интервал
+        'totalPages'  => $totalPages, // всего страниц
+        'currentPage' => $page, // текущая страница
+        'pageList'    => $pageList, // массив: [1, '...', 4, 5, 6, '...', 10]
+        'totalCount'  => $totalCount, // количество записей
+    ];
+}

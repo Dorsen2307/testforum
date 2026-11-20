@@ -241,10 +241,8 @@ function checkUserEmail($email) {
  * Запрос всех пользователей
  * @return bool|mysqli
  */
-function getUsers($offset=null): array {
+function getUsers(int $limit = ADMIN_LIMIT_USERS, int $offset = 0): array {
     $link = createConnection();
-    $types = '';
-    $params = [];
 
     $sql = "SELECT 
                 u.id,
@@ -264,13 +262,13 @@ function getUsers($offset=null): array {
             LEFT JOIN posts p ON p.user_id = u.id
             GROUP BY u.id, u.username, u.email, u.role, ban_expires_at
             ORDER BY u.id DESC
+            LIMIT ? OFFSET ?
             ";
-    if ($offset !== null) {
-        $sql .= " LIMIT ? OFFSET ?";
-        $types = 'ii';
-        $params = [PER_PAGE_USERS_ADMIN, $offset];
-    }
+    $types = 'ii';
+    $params = [$limit, $offset];
+
     $result = getDataFromDb($link, $sql, $types, $params);
+
     if (!$result) {
         return false;
     }

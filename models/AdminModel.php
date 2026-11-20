@@ -43,7 +43,7 @@ function logActivity(?int $userId, string $type, ?int $objectId = null, array $m
  * @param int $offset
  * @return array
  */
-function getRecentActivity(int $limit = LIMIT_RECENT_ACTIVITY, int $offset = 0): array
+function getRecentActivity(int $limit = ADMIN_LIMIT_RECENT_ACTIVITY, int $offset = 0): array
 {
     $sql = 'SELECT a.id, a.type, a.object_id, a.meta, a.created_at,
                    u.username
@@ -73,34 +73,11 @@ function getPaginationUsers($page) {
     $link = createConnection();
     $types = '';
     $params = [];
-//todo разработать логику пагинации
+
     // Считаем общее число записей
     $sql = "SELECT COUNT(*) AS total FROM users";
 
-    $total = getDataFromDb($link, $sql, $types, $params);
-
-    $total = createSmartyRecAssocArr($total)[0];
-
-    $totalCount = $total['total'];
-    $totalPages = max(1, (int)ceil($totalCount / PER_PAGE_POSTS));
-
-    if ($page > $totalPages) {
-        $page = $totalPages;
-    } elseif ($page < 1) {
-        $page = 1;
-    }
-
-    $offset = ($page - 1) * PER_PAGE_POSTS;
-
-    $pageList = getPageList($page, $totalPages);
-
-    return [
-        'offset' => $offset,
-        'totalPages' => $totalPages,
-        'total' => $totalCount,
-        'currentPage' => $page,
-        'pageList' => $pageList
-    ];
+    return getPagination($link, $sql, $types, $params, $page, ADMIN_LIMIT_USERS);
 }
 
 /**
@@ -199,4 +176,20 @@ function checkBanned(array $users): void {
             ]);
         }
     }
+}
+
+/**
+ * Запрос offset для пагинации "Последних активностей"
+ * @param $page
+ * @return array|bool
+ */
+function getPaginationActivity($page) {
+    $link = createConnection();
+    $types = '';
+    $params = [];
+
+    // Считаем общее число записей
+    $sql = "SELECT COUNT(*) AS total FROM activity_log";
+
+    return getPagination($link, $sql, $types, $params, $page, ADMIN_LIMIT_RECENT_ACTIVITY);
 }

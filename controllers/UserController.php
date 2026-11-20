@@ -76,7 +76,7 @@ function indexAction($smarty) {
  */
 function templateregistrationAction($smarty) {
     if (!isset($_SESSION['user'])) {
-        $user = getUsers();
+        $user = getUsers(1);
         if (!$user)  { // Если пользователей еще не зарегистрировано
             $smarty->assign('role', ROLE[1]); // Назначаем роль администратора
         }

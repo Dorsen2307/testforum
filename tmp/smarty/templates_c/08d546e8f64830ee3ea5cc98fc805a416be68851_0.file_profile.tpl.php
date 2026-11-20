@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-11-07 15:17:00
+/* Smarty version 5.8.5, created on 2026-11-19 17:24:29
   from 'file:profile.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6aef16bc7d36a9_86200761',
+  'unifunc' => 'content_6aff069d524a40_13587498',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '08d546e8f64830ee3ea5cc98fc805a416be68851' => 
     array (
       0 => 'profile.tpl',
-      1 => 1794053820,
+      1 => 1795098263,
       2 => 'file',
     ),
   ),
@@ -24,7 +24,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
     'file:../includes/footer.tpl' => 1,
   ),
 ))) {
-function content_6aef16bc7d36a9_86200761 (\Smarty\Template $_smarty_tpl) {
+function content_6aff069d524a40_13587498 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\default';
 ?><!doctype html>
 <html lang="ru">
@@ -77,20 +77,20 @@ echo $_smarty_tpl->getValue('arrProfile')['photo'];?>
 
         <!-- Вкладки -->
         <div class="profile-tabs" role="tablist">
-            <a class="profile-tab <?php if ($_smarty_tpl->getValue('tab') === 'about') {?>active<?php }?>" href="/?controller=user&action=profile&user_id=<?php echo $_smarty_tpl->getValue('arrProfile')['id'];?>
+            <a class="profile-tab <?php if ($_smarty_tpl->getValue('tab') === 'about') {?>active<?php }?>" href="/?controller=user&user_id=<?php echo $_smarty_tpl->getValue('arrProfile')['id'];?>
 &tab=about">
                 О себе
             </a>
-            <a class="profile-tab <?php if ($_smarty_tpl->getValue('tab') === 'topics') {?>active<?php }?>" href="/?controller=user&action=profile&user_id=<?php echo $_smarty_tpl->getValue('arrProfile')['id'];?>
+            <a class="profile-tab <?php if ($_smarty_tpl->getValue('tab') === 'topics') {?>active<?php }?>" href="/?controller=user&user_id=<?php echo $_smarty_tpl->getValue('arrProfile')['id'];?>
 &tab=topics">
                 Темы
             </a>
-            <a class="profile-tab <?php if ($_smarty_tpl->getValue('tab') === 'posts') {?>active<?php }?>" href="/?controller=user&action=profile&user_id=<?php echo $_smarty_tpl->getValue('arrProfile')['id'];?>
+            <a class="profile-tab <?php if ($_smarty_tpl->getValue('tab') === 'posts') {?>active<?php }?>" href="/?controller=user&user_id=<?php echo $_smarty_tpl->getValue('arrProfile')['id'];?>
 &tab=posts">
                 Комментарии
             </a>
             <?php if ($_smarty_tpl->getValue('isCurrentUser')) {?>
-            <a class="profile-tab <?php if ($_smarty_tpl->getValue('tab') === 'settings') {?>active<?php }?>" href="/?controller=user&action=profile&user_id=<?php echo $_smarty_tpl->getValue('arrProfile')['id'];?>
+            <a class="profile-tab <?php if ($_smarty_tpl->getValue('tab') === 'settings') {?>active<?php }?>" href="/?controller=user&user_id=<?php echo $_smarty_tpl->getValue('arrProfile')['id'];?>
 &tab=settings">
                 Настройки
             </a>

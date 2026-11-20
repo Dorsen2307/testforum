@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-10-27 11:28:48
+/* Smarty version 5.8.5, created on 2026-11-19 17:11:18
   from 'file:registration.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6ae060c0c31591_05567206',
+  'unifunc' => 'content_6aff0386d6d964_98546588',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'faffe97d9f0e1830fcf9f91d56a3683f8171fff1' => 
     array (
       0 => 'registration.tpl',
-      1 => 1793089721,
+      1 => 1795097478,
       2 => 'file',
     ),
   ),
@@ -23,7 +23,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
     'file:../includes/footer.tpl' => 1,
   ),
 ))) {
-function content_6ae060c0c31591_05567206 (\Smarty\Template $_smarty_tpl) {
+function content_6aff0386d6d964_98546588 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\default';
 ?><!DOCTYPE html>
 <html lang="ru">
@@ -38,6 +38,10 @@ $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\default';
     </header>
     <div class="container">
         <form id="registerForm">
+            <?php if ($_smarty_tpl->getValue('role')) {?>
+            <input type="hidden" name="role" value="<?php echo $_smarty_tpl->getValue('role');?>
+">
+            <?php }?>
             <!-- Имя пользователя -->
             <div class="form-group">
                 <label class="form-label" for="username">Имя пользователя <span>*</span></label>

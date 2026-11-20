@@ -14,17 +14,21 @@ function indexAction($smarty) {
     if (!$arrUser) {
         Header("location: /");
     }
+    $page = isset($_GET['page']) ? $_GET['page'] : 1;
     $dbUser = getUserById($arrUser['id']);
 
     if ($dbUser && $arrUser['role'] === 'admin' && $arrUser['role'] === $dbUser['role'] && $arrUser['email'] === $dbUser['email']) {
         $data = getData();
-        $recentActivity = getRecentActivity();
+        $pagination = getPaginationActivity($page);
+        $recentActivity = getRecentActivity(ADMIN_LIMIT_RECENT_ACTIVITY, $pagination['offset']);
+
 
         $smarty->assign('tab', 'view');
         $smarty->assign('data', $data);
         $smarty->assign('recentActivity', $recentActivity);
         $smarty->assign('isAdministration', true);
         $smarty->assign('tabTitle', 'Обзор');
+        $smarty->assign('pagination', $pagination);
         $smarty->assign('pageTitle', 'Администрирование форума');
         loadTemplate($smarty, "administration");
     }
@@ -53,7 +57,7 @@ function usersAction($smarty) {
 
     if ($dbUser && $arrUser['role'] === 'admin' && $arrUser['role'] === $dbUser['role'] && $arrUser['email'] === $dbUser['email']) {
         $pagination = getPaginationUsers($page);
-        $users = getUsers($pagination['offset']);
+        $users = getUsers(ADMIN_LIMIT_USERS, $pagination['offset']);
 
         checkBanned($users);
 

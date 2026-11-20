@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-11-07 10:57:29
+/* Smarty version 5.8.5, created on 2026-11-17 07:52:16
   from 'file:C:\OSPanel\domains\testforum\views\default\../includes/tabProfile.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6aeed9e9f05eb8_69778112',
+  'unifunc' => 'content_6afbdd80af8659_04520464',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'f6a21410794861da33bca37b8de1ae61bffc335d' => 
     array (
       0 => 'C:\\OSPanel\\domains\\testforum\\views\\default\\../includes/tabProfile.tpl',
-      1 => 1794038249,
+      1 => 1794891108,
       2 => 'file',
     ),
   ),
@@ -22,7 +22,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
     'file:../includes/posts.tpl' => 1,
   ),
 ))) {
-function content_6aeed9e9f05eb8_69778112 (\Smarty\Template $_smarty_tpl) {
+function content_6afbdd80af8659_04520464 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\includes';
 if ($_smarty_tpl->getValue('tab') === 'about') {?>
     <!-- Панель: О себе -->
@@ -81,7 +81,7 @@ $_smarty_tpl->getSmarty()->getRuntime('Foreach')->restore($_smarty_tpl, 1);?>
     <?php $_smarty_tpl->renderSubTemplate('file:../includes/pagination.tpl', $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), (int) 0, $_smarty_current_dir);
 }?>
 
-<?php if ($_smarty_tpl->getValue('tab') == 'settings' && $_smarty_tpl->getValue('isCurrentUser')) {?>
+<?php if ($_smarty_tpl->getValue('tab') == 'settings' && $_smarty_tpl->getValue('isCurrentUser') && !$_smarty_tpl->getValue('arrUser')['is_banned']) {?>
     <!-- Панель: Настройки -->
     <div class="profile-panel" id="panel-settings" role="tabpanel">
         <form id="updateProfileForm" class="profile-form" enctype="multipart/form-data">

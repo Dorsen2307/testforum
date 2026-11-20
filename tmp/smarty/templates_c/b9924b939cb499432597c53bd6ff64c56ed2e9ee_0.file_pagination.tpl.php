@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-11-16 09:41:22
+/* Smarty version 5.8.5, created on 2026-11-20 16:09:53
   from 'file:C:\OSPanel\domains\testforum\views\includes\../includes/pagination.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6afaa592ab8365_98394233',
+  'unifunc' => 'content_6b0046a1c56b30_58460523',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'b9924b939cb499432597c53bd6ff64c56ed2e9ee' => 
     array (
       0 => 'C:\\OSPanel\\domains\\testforum\\views\\includes\\../includes/pagination.tpl',
-      1 => 1794554423,
+      1 => 1795180193,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   array (
   ),
 ))) {
-function content_6afaa592ab8365_98394233 (\Smarty\Template $_smarty_tpl) {
+function content_6b0046a1c56b30_58460523 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\includes';
 if ($_smarty_tpl->getValue('pagination')['totalPages'] > 1) {?>
 <nav class="pagination">
@@ -30,7 +30,8 @@ if ($_smarty_tpl->getValue('pagination')['totalPages'] > 1) {?>
 }
 if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&topic_id=<?php echo $_smarty_tpl->getValue('topic')['id'];
 }
-if ($_smarty_tpl->getValue('isAdministration')) {?>controller=admin&action=users<?php }?>&page=<?php echo $_smarty_tpl->getValue('pagination')['currentPage']-1;
+if ($_smarty_tpl->getValue('tab') === 'users') {?>controller=admin&action=users<?php }
+if ($_smarty_tpl->getValue('tab') === 'view') {?>controller=admin<?php }?>&page=<?php echo $_smarty_tpl->getValue('pagination')['currentPage']-1;
 if ($_smarty_tpl->getValue('catId')) {?>&cat_id=<?php echo $_smarty_tpl->getValue('catId');
 }?>"
         >
@@ -55,7 +56,8 @@ $foreach0DoElse = false;
 }
 if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&topic_id=<?php echo $_smarty_tpl->getValue('topic')['id'];
 }
-if ($_smarty_tpl->getValue('isAdministration')) {?>controller=admin&action=users<?php }?>&page=<?php echo $_smarty_tpl->getValue('p');
+if ($_smarty_tpl->getValue('tab') === 'users') {?>controller=admin&action=users<?php }
+if ($_smarty_tpl->getValue('tab') === 'view') {?>controller=admin<?php }?>&page=<?php echo $_smarty_tpl->getValue('p');
 if ($_smarty_tpl->getValue('catId')) {?>&cat_id=<?php echo $_smarty_tpl->getValue('catId');
 }?>"
             >
@@ -73,7 +75,8 @@ $_smarty_tpl->getSmarty()->getRuntime('Foreach')->restore($_smarty_tpl, 1);?>
 }
 if ($_smarty_tpl->getValue('isPost')) {?>controller=topic&topic_id=<?php echo $_smarty_tpl->getValue('topic')['id'];
 }
-if ($_smarty_tpl->getValue('isAdministration')) {?>controller=admin&action=users<?php }?>&page=<?php echo $_smarty_tpl->getValue('pagination')['currentPage']+1;
+if ($_smarty_tpl->getValue('tab') === 'users') {?>controller=admin&action=users<?php }
+if ($_smarty_tpl->getValue('tab') === 'view') {?>controller=admin<?php }?>&page=<?php echo $_smarty_tpl->getValue('pagination')['currentPage']+1;
 if ($_smarty_tpl->getValue('catId')) {?>&cat_id=<?php echo $_smarty_tpl->getValue('catId');
 }?>"
         >

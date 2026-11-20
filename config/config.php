@@ -13,7 +13,8 @@ const DB_USER = 'root';
 const DB_PASS = '';
 
 // Админка
-const LIMIT_RECENT_ACTIVITY = 20; // количество выводимых событий
+const ADMIN_LIMIT_RECENT_ACTIVITY = 10; // количество выводимых событий
+const ADMIN_LIMIT_USERS = 2;
 
 // Константы пагинации
 const MAX_COUNT_PAGES = 5; // максимальное количество страниц в пагинации для подстановки '...'
@@ -22,7 +23,6 @@ const PER_PAGE_TOPICS = 5; // Количество тем на странице
 const PER_PAGE_POSTS = PER_PAGE_TOPICS;
 const PER_PAGE_TOPICS_PROFILE = PER_PAGE_TOPICS;
 const PER_PAGE_POSTS_PROFILE = PER_PAGE_TOPICS;
-const PER_PAGE_USERS_ADMIN = PER_PAGE_TOPICS;
 
 
 // Роли

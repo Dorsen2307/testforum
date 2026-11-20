@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 5.8.5, created on 2026-11-07 10:55:32
+/* Smarty version 5.8.5, created on 2026-11-19 17:26:32
   from 'file:C:\OSPanel\domains\testforum\views\includes\../includes/posts.tpl' */
 
 /* @var \Smarty\Template $_smarty_tpl */
 if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   'version' => '5.8.5',
-  'unifunc' => 'content_6aeed974b940e9_52210465',
+  'unifunc' => 'content_6aff0718597ec3_42683391',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '59733866d8b44164916bf834e555aae2ff46bd5f' => 
     array (
       0 => 'C:\\OSPanel\\domains\\testforum\\views\\includes\\../includes/posts.tpl',
-      1 => 1793956611,
+      1 => 1795098392,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->getCompiled()->isFresh($_smarty_tpl, array (
   array (
   ),
 ))) {
-function content_6aeed974b940e9_52210465 (\Smarty\Template $_smarty_tpl) {
+function content_6aff0718597ec3_42683391 (\Smarty\Template $_smarty_tpl) {
 $_smarty_current_dir = 'C:\\OSPanel\\domains\\testforum\\views\\includes';
 if ($_smarty_tpl->getValue('posts')) {?>
     <div class="profile-panel" id="panel-comments" role="tabpanel">
@@ -70,13 +70,7 @@ $_smarty_tpl->getSmarty()->getRuntime('Foreach')->restore($_smarty_tpl, 1);?>
         </ul>
     </div>
 <?php } else { ?>
-    <?php if ($_smarty_tpl->getValue('tab')) {?>
-    <div class="empty-state">Тем пока нет</div>
-    <?php } else { ?>
-    <div class="empty-state">
-        В этой теме пока нет сообщений. Будь первым!
-    </div>
-    <?php }
-}
+    <div class="empty-state">Комментариев пока нет</div>
+<?php }
 }
 }

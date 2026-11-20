@@ -243,32 +243,5 @@ function getPaginationTopics($page, $catId=null, $userId=null) {
         $params[] = $userId;
     }
 
-    $total = getDataFromDb($link, $sql, $types, $params);
-
-    if (!$total) {
-        return false;
-    }
-    $total = createSmartyRecAssocArr($total)[0];
-
-    $totalCount = (int)$total['total'];
-    $totalPages = max(1, (int)ceil($totalCount / PER_PAGE_TOPICS));
-
-    if ($page > $totalPages) {
-        $page = $totalPages;
-    } elseif ($page < 1) {
-        $page = 1;
-    }
-
-    $offset = ($page - 1) * PER_PAGE_TOPICS;
-
-    // Логика компактной комбинации
-    $pageList = getPageList($page, $totalPages);
-
-    return [
-        'offset' => $offset,
-        'totalPages'  => $totalPages,
-        'currentPage' => $page,
-        'pageList'    => $pageList, // массив: [1, '...', 4, 5, 6, '...', 10]
-        'totalCount'  => $totalCount,
-    ];
+    return getPagination($link, $sql, $types, $params, $page, PER_PAGE_TOPICS);
 }
