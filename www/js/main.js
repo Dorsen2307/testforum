@@ -258,7 +258,7 @@ function updateProfileUserData() {
         success: function (data) {
             if (data.success) {
                 alert (data.message);
-                window.location.href = '/?controller=user&action=profile';
+                window.location.href = '/?controller=user';
             } else {
                 showFormErrors(data.errors || {})
             }

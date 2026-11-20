@@ -359,3 +359,137 @@ td .sub { color: var(--muted); font-size: 12px; }
     .search { width: 150px; }
     .content { padding: 16px; }
 }
+
+/* ---------- Модалка бана --------- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+
+    /* скрыта и невидима для кликов по умолчанию */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease;
+}
+
+.modal-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 40px rgba(15, 23, 42, .25);
+    width: 420px;
+    max-width: calc(100vw - 32px);
+    padding: 20px;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.modal-header h3 { font-size: 16px; }
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--muted);
+    line-height: 1;
+}
+.modal-close:hover { color: var(--text); }
+.duration-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+}
+.duration-options .days-input {
+    width: 70px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin: 0 4px;
+}
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+/* Контейнер для flash-сообщений */
+.flash {
+    padding: 12px 16px;
+    margin: 0 0 16px 0;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Иконка-заглушка */
+.flash::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    display: block;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Успех — зелёный */
+.flash.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+.flash.success::before {
+    background-color: #4caf50;
+}
+
+/* Ошибка — красный */
+.flash.error {
+    background-color: #ffebee;
+    color: #c62828;
+}
+.flash.error::before {
+    background-color: #f44336;
+}
+
+/* Предупреждение — янтарный */
+.flash.warning {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+.flash.warning::before {
+    background-color: #ff9800;
+}
+
+/* Инфо — синий */
+.flash.info {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+.flash.info::before {
+    background-color: #2196f3;
+}
+
+/* Опционально: плавное появление/исчезновение */
+.flash.fade-in {
+    animation: flashFadeIn 0.3s ease-out;
+}
+@keyframes flashFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

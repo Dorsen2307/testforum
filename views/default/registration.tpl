@@ -9,7 +9,9 @@
     </header>
     <div class="container">
         <form id="registerForm">
+            {if $role}
             <input type="hidden" name="role" value="{$role}">
+            {/if}
             <!-- Имя пользователя -->
             <div class="form-group">
                 <label class="form-label" for="username">Имя пользователя <span>*</span></label>

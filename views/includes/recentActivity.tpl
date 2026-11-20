@@ -42,7 +42,7 @@
         <li>
             <span>
                 <b>{$item.meta.nickname}</b>
-                получил бан на 7 дней ({$item.meta.reason})
+                получил бан {if $item.meta.mode === 'days'}на {$item.meta.days} дней{else}{$item.meta.days}{/if} ({$item.meta.reason})
             </span>
             <time>{$item.user_created_at}</time>
         </li>

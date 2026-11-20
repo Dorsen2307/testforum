@@ -17,12 +17,13 @@ function registrationNewUser($name, $email, $pwHash, $role='user') {
     $link = createConnection();
 
     mysqli_begin_transaction($link);
-    $sql = "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)";
-    $types = 'sss';
-    $params = [$name, $email, $pwHash, $role];
+    $sql = "INSERT INTO users (username, email, password_hash, role, photo, about) VALUES (?, ?, ?, ?, ?, ?)";
+    $types = 'ssssss';
+    $params = [$name, $email, $pwHash, $role, '', ''];
 
-    $resultInsert = executeQuery($link, $sql, $params, $types);
+    $resultInsert = executeQuery($link, $sql, $types, $params);
 
+    logging('resultInsert', $resultInsert);
     if ($resultInsert) {
         mysqli_commit($link);
         $sql = "SELECT * FROM users WHERE (email = ? and password_hash = ?) LIMIT 1";
@@ -67,6 +68,11 @@ function loginUser($email) {
     return $result;
 }
 
+/**
+ * Обновление даты последнего входа
+ * @param $userId
+ * @return bool
+ */
 function updateLastLogin($userId) {
     $link = createConnection();
     $sql = "UPDATE users SET last_login = now() WHERE id = ?";
@@ -235,7 +241,7 @@ function checkUserEmail($email) {
  * Запрос всех пользователей
  * @return bool|mysqli
  */
-function getUsers($offset=null) {
+function getUsers($offset=null): array {
     $link = createConnection();
     $types = '';
     $params = [];
@@ -248,10 +254,15 @@ function getUsers($offset=null) {
                 u.created_at,
                 u.last_login,
                 u.is_banned, 
-                COUNT(p.id) AS user_posts_count 
+                COUNT(p.id) AS user_posts_count,
+                (SELECT b.expires_at
+                   FROM bans b
+                  WHERE b.user_id = u.id
+                    AND b.is_active = 1
+                ) AS ban_expires_at
             FROM users u
             LEFT JOIN posts p ON p.user_id = u.id
-            GROUP BY u.id, u.username, u.email, u.role
+            GROUP BY u.id, u.username, u.email, u.role, ban_expires_at
             ORDER BY u.id DESC
             ";
     if ($offset !== null) {
@@ -260,8 +271,13 @@ function getUsers($offset=null) {
         $params = [PER_PAGE_USERS_ADMIN, $offset];
     }
     $result = getDataFromDb($link, $sql, $types, $params);
+    if (!$result) {
+        return false;
+    }
     return createSmartyRecAssocArr($result);
 }
+
+
 /**
  * Обновляет данные пользователя
  * @param $id int id пользователя
@@ -377,7 +393,7 @@ function updateUser($id, $username, $email, $password, $pwdHash, $about, $photo)
  */
 function getUserById($userId) {
     $link = createConnection();
-    $sql = "SELECT * FROM users WHERE id = ? LIMIT 1";
+    $sql = "SELECT u.* FROM users u WHERE u.id = ? LIMIT 1";
     $types = 'i';
     $params = [$userId];
 

@@ -11,6 +11,60 @@ include_once '../models/AdminModel.php';
  * @param $smarty object
  */
 function indexAction($smarty) {
+    $arrUser = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+    if (!$arrUser) {
+        redirect("/");
+    }
+    $otherUserId = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+    $tab = isset($_GET['tab']) ? $_GET['tab'] : 'about';
+    $page = isset($_GET['page']) ? $_GET['page'] : 1;
+    $isCurrentUser = false; // Это чужой профиль
+    $allTopics = [];
+    $allPosts = [];
+
+    if (!$otherUserId || (int)$arrUser['id'] === (int)$otherUserId) {
+        $isCurrentUser = true; // Это наш профиль
+        $userId = $arrUser['id'];
+        $arrUser['roleName'] = replaceRoleToName($arrUser['role']);
+        $smarty->assign('arrProfile', $arrUser);
+        if ($arrUser['role'] === 'admin') {
+            $smarty->assign('isAdmin', true);
+        }
+    } else {
+        $userId = $otherUserId;
+        $arrOtherUser = getUserById($otherUserId);
+        $arrOtherUser['roleName'] = replaceRoleToName($arrOtherUser['role']);
+        $smarty->assign('arrProfile', $arrOtherUser);
+    }
+
+    if ($tab == 'topics') {
+        $pagination = getPaginationTopics($page, null, $userId);
+        if ($pagination) {
+            $allTopics = getAllActiveTopics($pagination['offset'], null, $userId);
+            $allTopics = replaceDate($allTopics);
+        }
+        $smarty->assign('userId', $userId);
+        $smarty->assign('allTopics', $allTopics);
+        $smarty->assign('pagination', $pagination);
+    }
+
+    if ($tab == 'posts') {
+        $pagination = getPaginationPosts($page, null, $userId);
+        if ($pagination) {
+            $allPosts = getAllPosts($pagination['offset'], null, $userId);
+            $allPosts = replaceDate($allPosts);
+        }
+        $smarty->assign('userId', $userId);
+        $smarty->assign('posts', $allPosts);
+        $smarty->assign('pagination', $pagination);
+    }
+
+    $arrUser['displayName'] = $arrUser['username'];
+
+    $smarty->assign('arrUser', $arrUser);
+    $smarty->assign('isCurrentUser', $isCurrentUser);
+    $smarty->assign('isProfile', true);
+    $smarty->assign('tab', $tab);
     $smarty->assign('pageTitle', 'Профиль');
 
     loadTemplate($smarty, 'profile');
@@ -23,8 +77,8 @@ function indexAction($smarty) {
 function templateregistrationAction($smarty) {
     if (!isset($_SESSION['user'])) {
         $user = getUsers();
-        if (!$user || mysqli_num_rows($user) < 0)  { // Если пользователей еще не зарегистрировано
-            $smarty->assing('role', ROLE[1]); // Назначаем роль администратора
+        if (!$user)  { // Если пользователей еще не зарегистрировано
+            $smarty->assign('role', ROLE[1]); // Назначаем роль администратора
         }
 
         $smarty->assign('flagReg', true);
@@ -73,8 +127,8 @@ function registrationAction() {
     }
 
     $pwHash = password_hash($password, PASSWORD_BCRYPT);
-
-    $userData = registrationNewUser($userName, $email, $pwHash, !is_null($role) ?: $role);
+    $role = !is_null($role) ? $role : 'user';
+    $userData = registrationNewUser($userName, $email, $pwHash, $role );
 
     if ($userData['success']) {
         $userData = $userData[0];
@@ -177,66 +231,9 @@ function logoutAction() {
 }
 
 /**
- * Формирование страницы профиля
- * @param $smarty
+ * Обновление данных пользователя
+ * @return void
  */
-function profileAction($smarty) {
-    $arrUser = isset($_SESSION['user']) ? $_SESSION['user'] : null;
-    $otherUserId = isset($_GET['user_id']) ? $_GET['user_id'] : null;
-    $tab = isset($_GET['tab']) ? $_GET['tab'] : 'about';
-    $page = isset($_GET['page']) ? $_GET['page'] : 1;
-    $isCurrentUser = false; // Это чужой профиль
-    $allTopics = [];
-    $allPosts = [];
-
-    if (!$otherUserId || (int)$arrUser['id'] === (int)$otherUserId) {
-        $isCurrentUser = true; // Это наш профиль
-        $userId = $arrUser['id'];
-        $arrUser['roleName'] = replaceRoleToName($arrUser['role']);
-        $smarty->assign('arrProfile', $arrUser);
-    } else {
-        $userId = $otherUserId;
-        $arrOtherUser = getUserById($otherUserId);
-        $arrOtherUser['roleName'] = replaceRoleToName($arrOtherUser['role']);
-        $smarty->assign('arrProfile', $arrOtherUser);
-    }
-
-    if ($arrUser['role'] === 'admin') {
-        $smarty->assign('isAdmin', true);
-    }
-
-    if ($tab == 'topics') {
-        $pagination = getPaginationTopics($page, null, $userId);
-        if ($pagination) {
-            $allTopics = getAllActiveTopics($pagination['offset'], null, $userId);
-            $allTopics = replaceDate($allTopics);
-        }
-        $smarty->assign('userId', $userId);
-        $smarty->assign('allTopics', $allTopics);
-        $smarty->assign('pagination', $pagination);
-    }
-
-    if ($tab == 'posts') {
-        $pagination = getPaginationPosts($page, null, $userId);
-        if ($pagination) {
-            $allPosts = getAllPosts($pagination['offset'], null, $userId);
-            $allPosts = replaceDate($allPosts);
-        }
-        $smarty->assign('userId', $userId);
-        $smarty->assign('posts', $allPosts);
-        $smarty->assign('pagination', $pagination);
-    }
-
-    $arrUser['displayName'] = $arrUser['username'];
-
-    $smarty->assign('arrUser', $arrUser);
-    $smarty->assign('isCurrentUser', $isCurrentUser);
-    $smarty->assign('isProfile', true);
-    $smarty->assign('tab', $tab);
-
-    loadTemplate($smarty, 'profile');
-}
-
 function updateuserdataAction() {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);

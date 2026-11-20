@@ -30,11 +30,5 @@
         </ul>
     </div>
 {else}
-    {if $tab}
-    <div class="empty-state">Тем пока нет</div>
-    {else}
-    <div class="empty-state">
-        В этой теме пока нет сообщений. Будь первым!
-    </div>
-    {/if}
+    <div class="empty-state">Комментариев пока нет</div>
 {/if}

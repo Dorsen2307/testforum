@@ -39,17 +39,17 @@
 
         <!-- Вкладки -->
         <div class="profile-tabs" role="tablist">
-            <a class="profile-tab {if $tab === 'about'}active{/if}" href="/?controller=user&action=profile&user_id={$arrProfile['id']}&tab=about">
+            <a class="profile-tab {if $tab === 'about'}active{/if}" href="/?controller=user&user_id={$arrProfile['id']}&tab=about">
                 О себе
             </a>
-            <a class="profile-tab {if $tab === 'topics'}active{/if}" href="/?controller=user&action=profile&user_id={$arrProfile['id']}&tab=topics">
+            <a class="profile-tab {if $tab === 'topics'}active{/if}" href="/?controller=user&user_id={$arrProfile['id']}&tab=topics">
                 Темы
             </a>
-            <a class="profile-tab {if $tab === 'posts'}active{/if}" href="/?controller=user&action=profile&user_id={$arrProfile['id']}&tab=posts">
+            <a class="profile-tab {if $tab === 'posts'}active{/if}" href="/?controller=user&user_id={$arrProfile['id']}&tab=posts">
                 Комментарии
             </a>
             {if $isCurrentUser}
-            <a class="profile-tab {if $tab === 'settings'}active{/if}" href="/?controller=user&action=profile&user_id={$arrProfile['id']}&tab=settings">
+            <a class="profile-tab {if $tab === 'settings'}active{/if}" href="/?controller=user&user_id={$arrProfile['id']}&tab=settings">
                 Настройки
             </a>
             {/if}

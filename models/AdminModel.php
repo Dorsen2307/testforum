@@ -110,18 +110,21 @@ function getPaginationUsers($page) {
  * @param int|null $adminId
  * @param string $reason
  * @param int|null $days
- * @return bool
+ * @return bool|array
  */
-function banUser(mysqli $link, int $targetUserId, ?int $adminId, string $reason, ?int $days = null): bool
+function banUser(int $targetUserId, ?int $adminId, string $reason, ?int $days = null)
 {
     $expiresAt = $days === null ? null : date('Y-m-d H:i:s', strtotime("+{$days} days"));
 
+    $link = createConnection();
+    mysqli_begin_transaction($link);
     // 1. Вставляем запись в bans
     $sql = "INSERT INTO bans (user_id, admin_id, reason, expires_at) VALUES (?, ?, ?, ?)";
-    $types = 'iisi';
+    $types = 'iiss';
     $params = [$targetUserId, $adminId, $reason, $expiresAt];
     $result = executeQuery($link, $sql, $types, $params);
     if (!$result) {
+        mysqli_rollback($link);
         return false;
     }
 
@@ -130,28 +133,70 @@ function banUser(mysqli $link, int $targetUserId, ?int $adminId, string $reason,
     $types = 'i';
     $params = [$targetUserId];
     $result = executeQuery($link, $sql, $types, $params);
-    return $result;
+
+    if (!$result) {
+        mysqli_rollback($link);
+        return false;
+    }
+
+    // 3. Запрашиваем имя забаненого
+    $sql = "SELECT username FROM users WHERE id = ?";
+    $types = 'i';
+    $params = [$targetUserId];
+    $result = getDataFromDb($link, $sql, $types, $params);
+
+    mysqli_commit($link);
+    return createSmartyRecAssocArr($result)[0];
 }
 
 /**
  * Снятие бана
  * @param mysqli $link
  * @param int $userId
- * @return bool
+ * @return bool|array
  */
-function unbanUser(mysqli $link, int $userId): bool
-{
+function unbanUser(int $userId) {
+    $link = createConnection();
+
+    mysqli_begin_transaction($link);
     // Помечаем бан как неактивный (история остаётся)
     $sql = "UPDATE bans SET is_active = 0 WHERE user_id = ? AND is_active = 1";
     $types = 'i';
     $params = [$userId];
     $ok1 = executeQuery($link, $sql, $types, $params);
+    if (!$ok1) {
+        mysqli_rollback($link);
+        return false;
+    }
 
     // Снимаем флаг
     $sql = "UPDATE users SET is_banned = 0 WHERE id = ?";
-    $types = 'i';
-    $params = [$userId];
     $ok2 = executeQuery($link, $sql, $types, $params);
+    if (!$ok2) {
+        mysqli_rollback($link);
+        return false;
+    }
 
-    return $ok1 && $ok2;
+    mysqli_commit($link);
+
+    // Запрашиваем имя разбаненого
+    $sql = "SELECT username FROM users WHERE id = ?";
+    $result = getDataFromDb($link, $sql, $types, $params);
+
+    return createSmartyRecAssocArr($result)[0];
+}
+
+/**
+ * Проверка бана
+ * @param array $users массив пользователей
+ */
+function checkBanned(array $users): void {
+    foreach ($users as $user) {
+        if ($user['is_banned'] === 1 && !is_null($user['ban_expires_at']) && $user['ban_expires_at'] < date('Y-m-d H:i:s')) {
+            $result = unbanUser($user['id']);
+            logActivity(null, 'user_unbanned', null, [
+                'nickname' => $result['username']
+            ]);
+        }
+    }
 }

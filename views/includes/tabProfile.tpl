@@ -40,7 +40,7 @@
     {include '../includes/pagination.tpl'}
 {/if}
 
-{if $tab == 'settings' and $isCurrentUser}
+{if $tab == 'settings' and $isCurrentUser and not $arrUser.is_banned}
     <!-- Панель: Настройки -->
     <div class="profile-panel" id="panel-settings" role="tabpanel">
         <form id="updateProfileForm" class="profile-form" enctype="multipart/form-data">
